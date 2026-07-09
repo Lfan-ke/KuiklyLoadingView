@@ -7,21 +7,36 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --blue:#1677ff;--green:#52c41a;--orange:#faad14;--red:#ff4d4f;--purple:#722ed1;
-  --sidebar-bg:#001529;--sidebar-text:#a6adb4;--sidebar-active:#1677ff;
+  --accent:#7c3aed;--accent2:#ec4899;
+  --blue:#3b82f6;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--purple:#7c3aed;
+  --sidebar-bg:#1a1625;--sidebar-text:#9d93b8;--sidebar-active:#7c3aed;
   --border:#f0f0f0;--card-shadow:0 2px 8px rgba(0,0,0,.1);
-  --phone-w:280px;--phone-h:580px;
+  --phone-w:280px;--phone-h:560px;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f6fa;display:flex;height:100vh;overflow:hidden}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0edfb;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* ── Top bar ── */
+#topbar{
+  height:52px;background:linear-gradient(135deg,#7c3aed 0%,#ec4899 100%);
+  display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;
+  box-shadow:0 2px 12px rgba(124,58,237,.35)
+}
+#topbar .logo{color:#fff;font-size:15px;font-weight:700;letter-spacing:.3px;flex:1}
+#topbar a{color:rgba(255,255,255,.85);font-size:12px;text-decoration:none;display:flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid rgba(255,255,255,.3);border-radius:6px;transition:all .2s}
+#topbar a:hover{background:rgba(255,255,255,.15);color:#fff}
+#theme-toggle{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s}
+#theme-toggle:hover{background:rgba(255,255,255,.25)}
+
+/* ── Body row ── */
+#body-row{flex:1;display:flex;overflow:hidden}
 
 /* ── Sidebar ── */
-#sidebar{width:220px;background:var(--sidebar-bg);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
-#sidebar h1{color:#fff;font-size:14px;font-weight:700;padding:20px 16px 8px;letter-spacing:.5px}
-#sidebar .version{color:#4a5568;font-size:11px;padding:0 16px 16px}
-.cat-label{color:#5a6b7e;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;padding:12px 16px 4px}
-.nav-item{display:block;padding:8px 16px;color:var(--sidebar-text);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;user-select:none}
-.nav-item:hover{color:#fff;background:rgba(255,255,255,.05)}
-.nav-item.active{color:#fff;background:rgba(22,119,255,.15);border-left-color:var(--blue)}
+#sidebar{width:218px;background:var(--sidebar-bg);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;padding-bottom:12px}
+#sidebar .version{color:#4a3d6b;font-size:11px;padding:12px 16px 4px}
+.cat-label{color:#4a3d6b;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:14px 16px 4px}
+.nav-item{display:block;padding:7px 16px;color:var(--sidebar-text);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;user-select:none}
+.nav-item:hover{color:#d4c8f8;background:rgba(124,58,237,.08)}
+.nav-item.active{color:#fff;background:rgba(124,58,237,.2);border-left-color:var(--accent)}
 
 /* ── Main area ── */
 #main{flex:1;display:flex;overflow:hidden}
@@ -54,19 +69,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .ctrl-body{padding:16px 20px}
 .ctrl-group{margin-bottom:16px}
 .ctrl-group label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:6px}
-.ctrl-group input[type=range]{width:100%;accent-color:var(--blue)}
+.ctrl-group input[type=range]{width:100%;accent-color:var(--accent)}
 .ctrl-group input[type=text],.ctrl-group select,.ctrl-group input[type=number]{
   width:100%;padding:6px 10px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none
 }
-.ctrl-group input[type=text]:focus,.ctrl-group select:focus{border-color:var(--blue)}
+.ctrl-group input[type=text]:focus,.ctrl-group select:focus{border-color:var(--accent)}
 .ctrl-row{display:flex;gap:6px;flex-wrap:wrap}
 .ctrl-btn{
   padding:5px 12px;border:1px solid #d9d9d9;border-radius:6px;font-size:12px;cursor:pointer;
   background:#fff;transition:all .2s;color:#333
 }
-.ctrl-btn.active,.ctrl-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.ctrl-btn.active,.ctrl-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .ctrl-toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:#333;cursor:pointer}
-.ctrl-toggle input{accent-color:var(--blue)}
+.ctrl-toggle input{accent-color:var(--accent)}
 .code-block{background:#1e1e3f;border-radius:8px;padding:12px 14px;font-family:'JetBrains Mono','Fira Code',monospace;font-size:10.5px;color:#cdd3de;line-height:1.6;overflow-x:auto;white-space:pre;margin-top:8px}
 .code-block .kw{color:#c792ea}.code-block .fn{color:#82aaff}.code-block .str{color:#c3e88d}.code-block .num{color:#f78c6c}
 .ctrl-divider{border:none;border-top:1px solid var(--border);margin:14px 0}
@@ -76,7 +91,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   width:36px;height:36px;border:3px solid rgba(255,255,255,.3);
   border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite
 }
-.spinner-blue{border:3px solid rgba(22,119,255,.2);border-top-color:var(--blue)}
+.spinner-blue{border:3px solid rgba(124,58,237,.2);border-top-color:var(--accent)}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
@@ -90,6 +105,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </style>
 </head>
 <body>
+
+<!-- ─── Top Bar ─── -->
+<header id="topbar">
+  <div class="logo">&#9889; KuiklyLoadingView</div>
+  <a href="https://github.com/Lfan-ke/KuiklyLoadingView" target="_blank">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    GitHub
+  </a>
+  <button id="theme-toggle" onclick="toggleTheme()">&#9790; Dark</button>
+</header>
+
+<div id="body-row">
 
 <!-- ─── Sidebar ─── -->
 <nav id="sidebar">
@@ -187,7 +214,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                 <!-- Spin overlay -->
                 <div id="spin-overlay" style="display:none;position:absolute;inset:0;background:rgba(255,255,255,.85);border-radius:10px;flex-direction:column;align-items:center;justify-content:center;gap:8px">
                   <div class="spinner spinner-blue" style="width:28px;height:28px"></div>
-                  <span id="spin-tip" style="font-size:11px;color:var(--blue)">加载中...</span>
+                  <span id="spin-tip" style="font-size:11px;color:var(--accent)">加载中...</span>
                 </div>
               </div>
             </div>
@@ -199,7 +226,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
               <div id="result-icon" style="font-size:52px;margin-bottom:12px">✅</div>
               <div id="result-title" style="font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:6px">操作成功</div>
               <div id="result-subtitle" style="font-size:12px;color:#888;margin-bottom:20px;line-height:1.5">您的操作已成功完成，数据已保存</div>
-              <button style="background:var(--blue);color:#fff;border:none;padding:9px 24px;border-radius:20px;font-size:13px;cursor:pointer">返回首页</button>
+              <button style="background:var(--accent);color:#fff;border:none;padding:9px 24px;border-radius:20px;font-size:13px;cursor:pointer">返回首页</button>
             </div>
           </div>
 
@@ -228,14 +255,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                   <span>进度</span><span id="pb-pct-label">60%</span>
                 </div>
                 <div id="pb-track" style="height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden">
-                  <div id="pb-fill" style="height:100%;width:60%;background:linear-gradient(90deg,#1677ff,#40a9ff);border-radius:6px;transition:width .4s ease"></div>
+                  <div id="pb-fill" style="height:100%;width:60%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:6px;transition:width .4s ease"></div>
                 </div>
               </div>
               <!-- striped -->
               <div>
                 <div style="font-size:11px;color:#888;margin-bottom:4px">条纹样式</div>
                 <div style="height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden">
-                  <div id="pb-striped" style="height:100%;width:75%;background:repeating-linear-gradient(45deg,#1677ff 0,#1677ff 10px,#40a9ff 10px,#40a9ff 20px);border-radius:6px"></div>
+                  <div id="pb-striped" style="height:100%;width:75%;background:repeating-linear-gradient(45deg,#7c3aed 0,#7c3aed 10px,#a78bfa 10px,#a78bfa 20px);border-radius:6px"></div>
                 </div>
               </div>
               <!-- success -->
@@ -291,12 +318,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
             <div style="padding:12px;width:100%">
               <div class="section-title">数据统计</div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-                <div class="stat-card" data-val="128450" data-prefix="¥" data-suffix="" data-label="总收入" data-color="#1677ff"></div>
+                <div class="stat-card" data-val="128450" data-prefix="¥" data-suffix="" data-label="总收入" data-color="#7c3aed"></div>
                 <div class="stat-card" data-val="9821" data-prefix="" data-suffix="人" data-label="用户数" data-color="#52c41a"></div>
                 <div class="stat-card" data-val="98.6" data-prefix="" data-suffix="%" data-label="满意度" data-color="#faad14"></div>
                 <div class="stat-card" data-val="3264" data-prefix="" data-suffix="单" data-label="今日订单" data-color="#722ed1"></div>
               </div>
-              <button id="stat-replay" style="margin-top:12px;width:100%;padding:8px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">▶ 重新播放动画</button>
+              <button id="stat-replay" style="margin-top:12px;width:100%;padding:8px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">▶ 重新播放动画</button>
             </div>
           </div>
 
@@ -353,7 +380,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                 </div>
                 <div style="position:relative;display:inline-block">
                   <div style="width:44px;height:44px;background:#fff7e6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>
-                  <div style="position:absolute;top:-8px;right:-12px;background:#1677ff;color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;white-space:nowrap;border:1.5px solid #fff">NEW</div>
+                  <div style="position:absolute;top:-8px;right:-12px;background:#7c3aed;color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;white-space:nowrap;border:1.5px solid #fff">NEW</div>
                 </div>
                 <div style="position:relative;display:inline-block;overflow:hidden">
                   <div style="width:80px;height:80px;background:#fff;border-radius:10px;border:1px solid #f0f0f0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#888">卡片</div>
@@ -363,7 +390,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
               <div style="margin-top:8px;text-align:center">
                 <div style="font-size:10px;color:#888;margin-bottom:8px">动态调整</div>
                 <div id="badge-dynamic" style="position:relative;display:inline-block">
-                  <div style="width:52px;height:52px;background:var(--blue);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px">🛒</div>
+                  <div style="width:52px;height:52px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px">🛒</div>
                   <div id="badge-count-el" style="position:absolute;top:-8px;right:-8px;background:#ff4d4f;color:#fff;font-size:10px;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff;font-weight:700">0</div>
                 </div>
               </div>
@@ -423,7 +450,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
               </div>
               <div style="background:#e6f4ff;border:1px solid #91caff;border-radius:6px;padding:9px 12px;display:flex;align-items:center;gap:8px">
                 <span style="font-size:14px">ℹ️</span>
-                <div style="flex:1;font-size:12px;color:#1677ff">单行静态通知消息示例</div>
+                <div style="flex:1;font-size:12px;color:#7c3aed">单行静态通知消息示例</div>
               </div>
               <div style="background:#f6ffed;border:1px solid #b7eb8f;border-radius:6px;padding:9px 12px;display:flex;align-items:center;gap:8px">
                 <span style="font-size:14px">✅</span>
@@ -444,7 +471,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
               <!-- FAB -->
               <div id="fab-wrap" style="position:absolute;bottom:16px;right:16px;display:flex;flex-direction:column;align-items:center;gap:8px">
                 <div id="fab-actions" style="display:flex;flex-direction:column;align-items:center;gap:8px"></div>
-                <div id="fab-btn" style="width:48px;height:48px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(22,119,255,.4);font-size:22px;color:#fff;transition:transform .3s;user-select:none">+</div>
+                <div id="fab-btn" style="width:48px;height:48px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(124,58,237,.4);font-size:22px;color:#fff;transition:transform .3s;user-select:none">+</div>
               </div>
             </div>
           </div>
@@ -922,7 +949,7 @@ const resultTypes={
   ERROR:{icon:'❌',color:'#ff4d4f',title:'操作失败',sub:'请检查后重试'},
   WARNING:{icon:'⚠️',color:'#faad14',title:'注意',sub:'此操作不可撤销'},
   EMPTY:{icon:'📭',color:'#8c8c8c',title:'暂无数据',sub:'试着添加一些内容吧'},
-  NETWORK_ERROR:{icon:'📡',color:'#1677ff',title:'网络错误',sub:'请检查网络连接'},
+  NETWORK_ERROR:{icon:'📡',color:'#7c3aed',title:'网络错误',sub:'请检查网络连接'},
   FORBIDDEN:{icon:'🔒',color:'#ff4d4f',title:'无权限',sub:'您没有访问此页面的权限'},
   NOT_FOUND:{icon:'🔍',color:'#8c8c8c',title:'页面不存在',sub:'您访问的内容已被移除'},
   CUSTOM:{icon:'🎨',color:'#722ed1',title:'自定义状态',sub:'配置任意图标与内容'},
@@ -960,7 +987,7 @@ function updateAlert() {
 }
 
 // ─── ProgressBar ──────────────────────────────────────────────────────────────
-const pbColors={蓝色:'linear-gradient(90deg,#1677ff,#40a9ff)',绿色:'linear-gradient(90deg,#52c41a,#73d13d)',橙色:'linear-gradient(90deg,#faad14,#ffc53d)',红色:'linear-gradient(90deg,#ff4d4f,#ff7875)'};
+const pbColors={蓝色:'linear-gradient(90deg,#7c3aed,#a78bfa)',绿色:'linear-gradient(90deg,#52c41a,#73d13d)',橙色:'linear-gradient(90deg,#faad14,#ffc53d)',红色:'linear-gradient(90deg,#ff4d4f,#ff7875)'};
 let pbColorSel='蓝色';
 function updatePB(v) {
   document.getElementById('pb-fill').style.width=v+'%';
@@ -984,12 +1011,12 @@ function drawCircular(canvas,pct,stroke,color,style,size){
   const start=-Math.PI/2,end=start+2*Math.PI*(pct/100);
   if(style==='GRADIENT'){
     const g=ctx.createLinearGradient(0,0,size,size);
-    g.addColorStop(0,'#1677ff');g.addColorStop(1,'#40a9ff');
+    g.addColorStop(0,'#7c3aed');g.addColorStop(1,'#a78bfa');
     ctx.strokeStyle=g;
   } else if(style==='DASHED'){
-    ctx.setLineDash([6,4]);ctx.strokeStyle=color||'#1677ff';
+    ctx.setLineDash([6,4]);ctx.strokeStyle=color||'#7c3aed';
   } else {
-    ctx.setLineDash([]);ctx.strokeStyle=color||'#1677ff';
+    ctx.setLineDash([]);ctx.strokeStyle=color||'#7c3aed';
   }
   ctx.beginPath();ctx.arc(cx,cy,r,start,end);
   ctx.lineWidth=stroke;ctx.lineCap='round';ctx.stroke();
@@ -1017,7 +1044,7 @@ function renderSteps(){
     c.innerHTML=`<div style="display:flex;align-items:flex-start;padding:16px 0;overflow-x:auto">` +
       Array.from({length:stepCount},(_,i)=>{
         const st=i<stepCur-1?'done':i===stepCur-1?'active':'pending';
-        const dotColor=st==='done'?'#52c41a':st==='active'?'#1677ff':'#d9d9d9';
+        const dotColor=st==='done'?'#52c41a':st==='active'?'#7c3aed':'#d9d9d9';
         const line=i<stepCount-1?`<div style="flex:1;height:2px;background:${i<stepCur-1?'#52c41a':'#f0f0f0'};margin-top:14px"></div>`:'';
         return `<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;min-width:60px">
           <div style="width:28px;height:28px;border-radius:50%;background:${dotColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">${st==='done'?'✓':(i+1)}</div>
@@ -1028,7 +1055,7 @@ function renderSteps(){
     c.innerHTML=`<div style="display:flex;flex-direction:column;gap:0;padding:8px 0">` +
       Array.from({length:stepCount},(_,i)=>{
         const st=i<stepCur-1?'done':i===stepCur-1?'active':'pending';
-        const dotColor=st==='done'?'#52c41a':st==='active'?'#1677ff':'#d9d9d9';
+        const dotColor=st==='done'?'#52c41a':st==='active'?'#7c3aed':'#d9d9d9';
         return `<div style="display:flex;gap:12px">
           <div style="display:flex;flex-direction:column;align-items:center">
             <div style="width:24px;height:24px;border-radius:50%;background:${dotColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px">${st==='done'?'✓':(i+1)}</div>
@@ -1041,7 +1068,7 @@ function renderSteps(){
     c.innerHTML=`<div style="display:flex;align-items:center;padding:16px;gap:0">` +
       Array.from({length:stepCount},(_,i)=>{
         const done=i<stepCur-1,active=i===stepCur-1;
-        const dc=done?'#52c41a':active?'#1677ff':'#d9d9d9';
+        const dc=done?'#52c41a':active?'#7c3aed':'#d9d9d9';
         return `<div style="width:${active?14:10}px;height:${active?14:10}px;border-radius:50%;background:${dc};flex-shrink:0;transition:all .2s"></div>${i<stepCount-1?`<div style="flex:1;height:2px;background:${done?'#52c41a':'#f0f0f0'}"></div>`:''}`;
       }).join('') + '</div>' +
       `<div style="text-align:center;font-size:12px;color:#888">步骤 ${stepCur} / ${stepCount}</div>`;
@@ -1049,7 +1076,7 @@ function renderSteps(){
     c.innerHTML=`<div style="display:flex;border-radius:8px;overflow:hidden;border:1px solid #f0f0f0">` +
       Array.from({length:stepCount},(_,i)=>{
         const active=i===stepCur-1;
-        return `<div style="flex:1;padding:10px 4px;text-align:center;background:${active?'#1677ff':'#fff'};color:${active?'#fff':'#888'};font-size:11px;border-right:${i<stepCount-1?'1px solid #f0f0f0':'none'}">${stepLabels[i]||'步骤'+(i+1)}</div>`;
+        return `<div style="flex:1;padding:10px 4px;text-align:center;background:${active?'#7c3aed':'#fff'};color:${active?'#fff':'#888'};font-size:11px;border-right:${i<stepCount-1?'1px solid #f0f0f0':'none'}">${stepLabels[i]||'步骤'+(i+1)}</div>`;
       }).join('') + '</div>';
   }
 }
@@ -1061,9 +1088,9 @@ function setStepStyle(v,el){stepStyle=v;renderSteps();document.querySelectorAll(
 let loadMoreState='IDLE', loadMoreItems=['条目 1','条目 2','条目 3','条目 4','条目 5'];
 function renderLoadMore(){
   const list=document.getElementById('loadmore-list');
-  list.innerHTML=loadMoreItems.map((t,i)=>`<div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:12px;color:#333;display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;background:#e6f4ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#1677ff;font-weight:700">${i+1}</div>${t}</div>`).join('');
+  list.innerHTML=loadMoreItems.map((t,i)=>`<div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:12px;color:#333;display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;background:#e6f4ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#7c3aed;font-weight:700">${i+1}</div>${t}</div>`).join('');
   const footer=document.getElementById('loadmore-footer');
-  const states={IDLE:'点击加载更多 →',LOADING:'<span style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border:2px solid #1677ff;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite"></div>加载中...</span>',SUCCESS:'✅ 加载成功',NO_MORE:'— 没有更多了 —',ERROR:'❌ 加载失败，点击重试'};
+  const states={IDLE:'点击加载更多 →',LOADING:'<span style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border:2px solid #7c3aed;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite"></div>加载中...</span>',SUCCESS:'✅ 加载成功',NO_MORE:'— 没有更多了 —',ERROR:'❌ 加载失败，点击重试'};
   footer.innerHTML=states[loadMoreState]||states.IDLE;
   footer.onclick=()=>{if(loadMoreState==='IDLE'||loadMoreState==='ERROR')triggerLoadMore();};
 }
@@ -1115,7 +1142,7 @@ function updateCDDisplay(){
   // TEXT
   document.getElementById('cd-text').textContent=`${h}:${m}:${s}`;
   // COLON
-  document.getElementById('cd-colon').innerHTML=[h,m,s].map((v,i)=>`<div style="background:#1677ff;color:#fff;border-radius:6px;padding:6px 10px;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">${v}</div>${i<2?'<span style="color:#1677ff;font-size:18px;font-weight:700;margin:0 1px">:</span>':''}`).join('');
+  document.getElementById('cd-colon').innerHTML=[h,m,s].map((v,i)=>`<div style="background:#7c3aed;color:#fff;border-radius:6px;padding:6px 10px;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">${v}</div>${i<2?'<span style="color:#7c3aed;font-size:18px;font-weight:700;margin:0 1px">:</span>':''}`).join('');
   // BLOCK
   document.getElementById('cd-block').innerHTML=[h,m,s].map((v,i)=>`<div style="text-align:center"><div style="background:#1a1a1a;color:#fff;border-radius:6px;padding:4px 8px;font-size:15px;font-weight:700;font-family:monospace">${v}</div><div style="font-size:9px;color:#888;margin-top:2px">${['时','分','秒'][i]}</div></div>${i<2?'<span style="color:#1a1a1a;font-size:16px;font-weight:700;align-self:flex-start;margin-top:3px">:</span>':''}`).join('');
 }
@@ -1166,10 +1193,10 @@ function setSkTheme(v,el){skTheme=v;renderSkeleton();document.querySelectorAll('
 // ─── Timeline ─────────────────────────────────────────────────────────────────
 let tlMode='LEFT',tlTheme='DEFAULT';
 const tlItems=[{time:'10:00',text:'订单已创建',status:'done'},{time:'10:05',text:'商家已接单',status:'done'},{time:'10:30',text:'骑手正在配送',status:'active'},{time:'--:--',text:'等待送达',status:'pending'}];
-const tlColors={DEFAULT:'#d9d9d9',PRIMARY:'#1677ff',SUCCESS:'#52c41a'};
+const tlColors={DEFAULT:'#d9d9d9',PRIMARY:'#7c3aed',SUCCESS:'#52c41a'};
 function renderTimeline(){
   const c=document.getElementById('timeline-container');
-  const dotColor={done:'#52c41a',active:'#1677ff',pending:'#d9d9d9'};
+  const dotColor={done:'#52c41a',active:'#7c3aed',pending:'#d9d9d9'};
   const lineColor=tlColors[tlTheme];
   c.innerHTML=tlItems.map((item,i)=>{
     const dot=`<div style="width:12px;height:12px;border-radius:50%;background:${dotColor[item.status]};border:2px solid #fff;box-shadow:0 0 0 2px ${dotColor[item.status]};flex-shrink:0"></div>`;
@@ -1185,7 +1212,7 @@ function setTimelineTheme(v,el){tlTheme=v;renderTimeline();document.querySelecto
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
 let badgeType='COUNT',badgeColor='RED',badgeCount=5;
-const badgeColors={RED:'#ff4d4f',BLUE:'#1677ff',GREEN:'#52c41a',ORANGE:'#fa8c16',GRAY:'#8c8c8c',PURPLE:'#722ed1'};
+const badgeColors={RED:'#ff4d4f',BLUE:'#7c3aed',GREEN:'#52c41a',ORANGE:'#fa8c16',GRAY:'#8c8c8c',PURPLE:'#722ed1'};
 function renderBadge(){
   const color=badgeColors[badgeColor]||'#ff4d4f';
   if(badgeType==='DOT') return`<div style="width:10px;height:10px;background:${color};border-radius:50%;border:2px solid #fff"></div>`;
@@ -1200,7 +1227,7 @@ function updateBadge(){badgeCount=+(document.getElementById('bg-count').value||0
 
 // ─── Tag ──────────────────────────────────────────────────────────────────────
 let tagStyle='FILLED',tagShape='ROUNDED',tagColor='PRIMARY';
-const tagPresets={PRIMARY:{fill:'#1677ff',text:'#fff',border:'#1677ff',ghost:'#e6f4ff',ghostText:'#1677ff'},SUCCESS:{fill:'#52c41a',text:'#fff',border:'#52c41a',ghost:'#f6ffed',ghostText:'#52c41a'},WARNING:{fill:'#faad14',text:'#fff',border:'#faad14',ghost:'#fffbe6',ghostText:'#d48806'},DANGER:{fill:'#ff4d4f',text:'#fff',border:'#ff4d4f',ghost:'#fff2f0',ghostText:'#cf1322'},PURPLE:{fill:'#722ed1',text:'#fff',border:'#722ed1',ghost:'#f9f0ff',ghostText:'#722ed1'}};
+const tagPresets={PRIMARY:{fill:'#7c3aed',text:'#fff',border:'#7c3aed',ghost:'#e6f4ff',ghostText:'#7c3aed'},SUCCESS:{fill:'#52c41a',text:'#fff',border:'#52c41a',ghost:'#f6ffed',ghostText:'#52c41a'},WARNING:{fill:'#faad14',text:'#fff',border:'#faad14',ghost:'#fffbe6',ghostText:'#d48806'},DANGER:{fill:'#ff4d4f',text:'#fff',border:'#ff4d4f',ghost:'#fff2f0',ghostText:'#cf1322'},PURPLE:{fill:'#722ed1',text:'#fff',border:'#722ed1',ghost:'#f9f0ff',ghostText:'#722ed1'}};
 const tagLabels=['设计','前端','Kotlin','跨平台','UI组件','开源'];
 function renderTags(){
   const c=document.getElementById('tag-container');
@@ -1247,9 +1274,9 @@ function setNoticeMode(v,el){
 document.getElementById('noticebar-close').onclick=function(){document.getElementById('noticebar-el').style.display='none';};
 
 // ─── FloatButton ──────────────────────────────────────────────────────────────
-let fabExpanded=false,fabColor='#1677ff',fabCount=4;
+let fabExpanded=false,fabColor='#7c3aed',fabCount=4;
 const fabActions=[{icon:'📷',label:'拍照'},{icon:'📁',label:'文件'},{icon:'✏️',label:'编辑'},{icon:'🗑',label:'删除'}];
-const fabBgColors={PRIMARY:'#1677ff',SUCCESS:'#52c41a',WARNING:'#faad14',DANGER:'#ff4d4f'};
+const fabBgColors={PRIMARY:'#7c3aed',SUCCESS:'#52c41a',WARNING:'#faad14',DANGER:'#ff4d4f'};
 function renderFabActions(){
   const btn=document.getElementById('fab-btn');
   btn.style.background=fabColor;
@@ -1272,7 +1299,7 @@ function toggleFab(){
   });
 }
 document.getElementById('fab-btn').onclick=toggleFab;
-function setFabColor(v,el){fabColor=fabBgColors[v]||'#1677ff';renderFabActions();document.querySelectorAll('[onclick^="setFabColor"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setFabColor(v,el){fabColor=fabBgColors[v]||'#7c3aed';renderFabActions();document.querySelectorAll('[onclick^="setFabColor"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
 function updateFabCount(v){fabCount=+v;fabExpanded=false;renderFabActions();document.getElementById('fab-btn').style.transform='rotate(0)';}
 
 // ─── Collapse ─────────────────────────────────────────────────────────────────
@@ -1290,7 +1317,7 @@ function renderCollapse(){
     html+=`<div style="${cardStyle}">
       <div style="display:flex;align-items:center;padding:11px 14px;background:${open?'#fafafa':'#fff'};cursor:pointer;${!isCard&&i>0?'border-top:1px solid #f0f0f0':''}" onclick="toggleCollapse(${i})">
         <span style="flex:1;font-size:13px;font-weight:${open?600:400};color:#1a1a1a">${panel.title}</span>
-        <span style="font-size:14px;color:${open?'#1677ff':'#aaa'};transform:rotate(${open?90:0}deg);transition:transform .2s;display:inline-block">›</span>
+        <span style="font-size:14px;color:${open?'#7c3aed':'#aaa'};transform:rotate(${open?90:0}deg);transition:transform .2s;display:inline-block">›</span>
       </div>
       ${open?`<div style="padding:10px 14px;font-size:12px;color:#666;line-height:1.6;background:#fff;border-top:1px solid #f0f0f0">${panel.body}</div>`:''}
     </div>`;
@@ -1334,6 +1361,31 @@ function renderWatermark(){
 renderControls('loading');
 updateAlert();
 setTimeout(()=>{drawAllCircular();renderWatermark();},100);
+
+// ─── Dark/Light theme toggle ──────────────────────────────────────────────────
+let darkMode=false;
+function toggleTheme(){
+  darkMode=!darkMode;
+  const btn=document.getElementById('theme-toggle');
+  if(darkMode){
+    document.body.style.background='#0f0d1a';
+    document.getElementById('main').style.background='#0f0d1a';
+    document.querySelectorAll('#controls').forEach(el=>el.style.background='#1a1625');
+    document.querySelectorAll('#controls').forEach(el=>el.style.borderColor='#2d2047');
+    document.querySelectorAll('.ctrl-header').forEach(el=>el.style.borderColor='#2d2047');
+    document.querySelectorAll('.ctrl-header h2').forEach(el=>el.style.color='#e2d9f3');
+    btn.textContent='☀ Light';
+  } else {
+    document.body.style.background='#f0edfb';
+    document.getElementById('main').style.background='#f0edfb';
+    document.querySelectorAll('#controls').forEach(el=>el.style.background='#fff');
+    document.querySelectorAll('#controls').forEach(el=>el.style.borderColor='#f0f0f0');
+    document.querySelectorAll('.ctrl-header').forEach(el=>el.style.borderColor='#f0f0f0');
+    document.querySelectorAll('.ctrl-header h2').forEach(el=>el.style.color='#1a1a1a');
+    btn.textContent='☾ Dark';
+  }
+}
 </script>
+</div><!-- end #body-row -->
 </body>
 </html>
