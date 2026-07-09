@@ -19,14 +19,20 @@ import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.base.Color
 import com.tencent.kuikly.core.base.ViewBuilder
 import com.tencent.kuikly.core.reactive.handler.observable
+import com.tencent.kuikly.core.views.ActivityIndicator
+import com.tencent.kuikly.core.views.Scroller
 import com.tencent.kuikly.core.views.Text
 import com.tencent.kuikly.core.views.View
 import com.tencent.kuiklybase.loading.Loading
-import com.tencent.kuikly.core.views.ActivityIndicator
+import com.tencent.kuiklybase.loading.Skeleton
+import com.tencent.kuiklybase.loading.SkeletonAnimation
+import com.tencent.kuiklybase.loading.SkeletonPreset
+import com.tencent.kuiklybase.loading.SkeletonRow
 
 @Page("LoadingViewDemoPage")
 internal class LoadingViewDemoPage : BasePager() {
 
+    // --- Loading state ---
     private var showFullScreen by observable(false)
     private var showPartial by observable(false)
     private var showWithTimeout by observable(false)
@@ -34,146 +40,298 @@ internal class LoadingViewDemoPage : BasePager() {
     private var showCustomContent by observable(false)
     private var showWithDelay by observable(false)
 
+    // --- Skeleton state ---
+    private var skArticleLoading by observable(true)
+    private var skProfileLoading by observable(true)
+    private var skListLoading by observable(true)
+    private var skPulseLoading by observable(true)
+    private var skRoundLoading by observable(true)
+    private var skCustomLoading by observable(true)
+
     override fun body(): ViewBuilder {
         val ctx = this
         return {
-            View {
+            Scroller {
                 attr {
                     flex(1f)
-                    padding(16f)
                     flexDirectionColumn()
+                    backgroundColor(Color(0xFFF5F5F5L))
                 }
-                View {
-                    attr {
-                        height(48f)
-                        backgroundColor(Color(0xFF1976D2L))
-                        borderRadius(8f)
-                        justifyContentCenter()
-                        alignItemsCenter()
-                        marginBottom(12f)
-                    }
-                    event {
-                        click { ctx.showFullScreen = true }
-                    }
-                    Text {
+
+                // ---- Section header helper ----
+                fun sectionHeader(title: String) {
+                    View {
                         attr {
-                            color(Color.WHITE)
-                            fontSize(15f)
-                            text("全屏加载（点击显示）")
+                            height(40f)
+                            backgroundColor(Color(0xFFEEEEEEL))
+                            justifyContentCenter()
+                            paddingLeft(16f)
+                            marginTop(8f)
+                        }
+                        Text {
+                            attr {
+                                fontSize(13f)
+                                color(Color(0xFF555555L))
+                                text(title)
+                            }
                         }
                     }
                 }
-                View {
-                    attr {
-                        height(48f)
-                        backgroundColor(Color(0xFF388E3CL))
-                        borderRadius(8f)
-                        justifyContentCenter()
-                        alignItemsCenter()
-                        marginBottom(12f)
-                    }
-                    event {
-                        click { ctx.showPartial = true }
-                    }
-                    Text {
+
+                fun demoButton(label: String, bgColor: Color, onClick: () -> Unit) {
+                    View {
                         attr {
-                            color(Color.WHITE)
-                            fontSize(15f)
-                            text("局部加载（点击显示）")
+                            height(44f)
+                            backgroundColor(bgColor)
+                            borderRadius(8f)
+                            justifyContentCenter()
+                            alignItemsCenter()
+                            marginBottom(10f)
+                            marginLeft(16f)
+                            marginRight(16f)
+                        }
+                        event { click { onClick() } }
+                        Text {
+                            attr {
+                                color(Color.WHITE)
+                                fontSize(14f)
+                                text(label)
+                            }
                         }
                     }
                 }
-                View {
-                    attr {
-                        height(48f)
-                        backgroundColor(Color(0xFFF57C00L))
-                        borderRadius(8f)
-                        justifyContentCenter()
-                        alignItemsCenter()
-                        marginBottom(12f)
-                    }
-                    event {
-                        click { ctx.showWithTimeout = true }
-                    }
-                    Text {
+
+                fun toggleButton(label: String, isLoading: Boolean, color: Color, onClick: () -> Unit) {
+                    View {
                         attr {
-                            color(Color.WHITE)
-                            fontSize(15f)
-                            text("3 秒超时自动关闭")
+                            height(32f)
+                            paddingLeft(14f)
+                            paddingRight(14f)
+                            borderRadius(16f)
+                            backgroundColor(color)
+                            justifyContentCenter()
+                            alignItemsCenter()
+                            marginBottom(8f)
+                            marginLeft(16f)
+                        }
+                        event { click { onClick() } }
+                        Text {
+                            attr {
+                                fontSize(12f)
+                                color(Color.WHITE)
+                                text(if (isLoading) "切换显示真实内容" else "切换回骨架屏")
+                            }
                         }
                     }
                 }
+
+                // ================================================================
+                // Loading Section
+                // ================================================================
+                sectionHeader("Loading 组件")
+
                 View {
                     attr {
-                        height(48f)
-                        backgroundColor(Color(0xFF7B1FA2L))
-                        borderRadius(8f)
-                        justifyContentCenter()
-                        alignItemsCenter()
-                        marginBottom(12f)
+                        padding(16f)
+                        flexDirectionColumn()
                     }
-                    event {
-                        click { ctx.showCustomSize = true }
-                    }
-                    Text {
+                    demoButton("全屏加载（点击显示）", Color(0xFF1976D2L)) { ctx.showFullScreen = true }
+                    demoButton("局部加载（点击显示）", Color(0xFF388E3CL)) { ctx.showPartial = true }
+                    demoButton("3 秒超时自动关闭", Color(0xFFF57C00L)) { ctx.showWithTimeout = true }
+                    demoButton("自定义指示器尺寸 indicatorSize=3", Color(0xFF7B1FA2L)) { ctx.showCustomSize = true }
+                    demoButton("自定义加载内容 customContent", Color(0xFF00796BL)) { ctx.showCustomContent = true }
+                    demoButton("延迟 800ms 显示（快速操作不闪烁）", Color(0xFF37474FL)) { ctx.showWithDelay = true }
+
+                    Loading {
                         attr {
-                            color(Color.WHITE)
-                            fontSize(15f)
-                            text("自定义指示器尺寸（indicatorSize=3）")
+                            visible(ctx.showPartial)
+                            fullScreen(false)
+                            loadingText("局部加载中…")
+                        }
+                        event { onTimeout { ctx.showPartial = false } }
+                    }
+                }
+
+                // ================================================================
+                // Skeleton Section
+                // ================================================================
+                sectionHeader("Skeleton 骨架屏 - 文章 (shimmer)")
+                toggleButton("切换", ctx.skArticleLoading, Color(0xFF1677FFL)) { ctx.skArticleLoading = !ctx.skArticleLoading }
+                Skeleton {
+                    attr {
+                        loading(ctx.skArticleLoading)
+                        preset(SkeletonPreset.article)
+                        animation(SkeletonAnimation.SHIMMER)
+                        contentPadding(16f)
+                        content {
+                            View {
+                                attr {
+                                    padding(16f)
+                                    flexDirectionColumn()
+                                }
+                                View {
+                                    attr {
+                                        height(160f)
+                                        backgroundColor(Color(0xFFBBDEFBL))
+                                        borderRadius(6f)
+                                        marginBottom(12f)
+                                        justifyContentCenter()
+                                        alignItemsCenter()
+                                    }
+                                    Text { attr { fontSize(14f); color(Color(0xFF1976D2L)); text("图片已加载") } }
+                                }
+                                Text { attr { fontSize(16f); color(Color(0xFF212121L)); text("文章标题已加载") } }
+                                Text { attr { fontSize(13f); color(Color(0xFF757575L)); marginTop(8f); text("正文内容第一行已加载完成，内容丰富。") } }
+                            }
                         }
                     }
                 }
-                View {
+
+                sectionHeader("Skeleton 骨架屏 - 用户资料 (pulse)")
+                toggleButton("切换", ctx.skProfileLoading, Color(0xFF52C41AL)) { ctx.skProfileLoading = !ctx.skProfileLoading }
+                Skeleton {
                     attr {
-                        height(48f)
-                        backgroundColor(Color(0xFF00796BL))
-                        borderRadius(8f)
-                        justifyContentCenter()
-                        alignItemsCenter()
-                        marginBottom(12f)
-                    }
-                    event {
-                        click { ctx.showCustomContent = true }
-                    }
-                    Text {
-                        attr {
-                            color(Color.WHITE)
-                            fontSize(15f)
-                            text("自定义加载内容（customContent）")
+                        loading(ctx.skProfileLoading)
+                        preset(SkeletonPreset.profile)
+                        animation(SkeletonAnimation.PULSE)
+                        contentPadding(16f)
+                        content {
+                            View {
+                                attr { padding(16f); flexDirectionRow(); alignItemsCenter() }
+                                View {
+                                    attr {
+                                        width(56f); height(56f); borderRadius(28f)
+                                        backgroundColor(Color(0xFF4CAF50L))
+                                        justifyContentCenter(); alignItemsCenter()
+                                        marginRight(12f)
+                                    }
+                                    Text { attr { fontSize(20f); color(Color.WHITE); text("A") } }
+                                }
+                                View {
+                                    attr { flexDirectionColumn() }
+                                    Text { attr { fontSize(16f); color(Color(0xFF212121L)); text("Alice Chen") } }
+                                    Text { attr { fontSize(13f); color(Color(0xFF757575L)); marginTop(4f); text("@alice · 前端工程师") } }
+                                }
+                            }
                         }
                     }
                 }
-                View {
+
+                sectionHeader("Skeleton 骨架屏 - 列表 ×3 (shimmer)")
+                toggleButton("切换", ctx.skListLoading, Color(0xFFFF9800L)) { ctx.skListLoading = !ctx.skListLoading }
+                Skeleton {
                     attr {
-                        height(48f)
-                        backgroundColor(Color(0xFF37474FL))
-                        borderRadius(8f)
-                        justifyContentCenter()
-                        alignItemsCenter()
-                        marginBottom(12f)
-                    }
-                    event {
-                        click { ctx.showWithDelay = true }
-                    }
-                    Text {
-                        attr {
-                            color(Color.WHITE)
-                            fontSize(15f)
-                            text("延迟 800ms 显示（快速操作不闪烁）")
+                        loading(ctx.skListLoading)
+                        preset(SkeletonPreset.listItem)
+                        animation(SkeletonAnimation.SHIMMER)
+                        repeatCount(3)
+                        repeatSpacing(16f)
+                        contentPadding(16f)
+                        content {
+                            View {
+                                attr { padding(16f); flexDirectionColumn() }
+                                for (name in listOf("Alice", "Bob", "Carol")) {
+                                    View {
+                                        attr { flexDirectionRow(); alignItemsCenter(); marginBottom(16f) }
+                                        View {
+                                            attr {
+                                                width(44f); height(44f); borderRadius(22f)
+                                                backgroundColor(Color(0xFF1677FFL))
+                                                justifyContentCenter(); alignItemsCenter(); marginRight(12f)
+                                            }
+                                            Text { attr { fontSize(16f); color(Color.WHITE); text(name[0].toString()) } }
+                                        }
+                                        View {
+                                            attr { flexDirectionColumn() }
+                                            Text { attr { fontSize(15f); color(Color(0xFF212121L)); text(name) } }
+                                            Text { attr { fontSize(12f); color(Color(0xFF9E9E9EL)); marginTop(4f); text("内容已加载完成") } }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-                Loading {
+
+                sectionHeader("Skeleton 骨架屏 - 圆角样式 round=true (pulse)")
+                toggleButton("切换", ctx.skRoundLoading, Color(0xFF9C27B0L)) { ctx.skRoundLoading = !ctx.skRoundLoading }
+                Skeleton {
                     attr {
-                        visible(ctx.showPartial)
-                        fullScreen(false)
-                        loadingText("局部加载中…")
-                    }
-                    event {
-                        onTimeout { ctx.showPartial = false }
+                        loading(ctx.skRoundLoading)
+                        preset(SkeletonPreset.paragraph)
+                        animation(SkeletonAnimation.PULSE)
+                        round(true)
+                        contentPadding(16f)
+                        content {
+                            View {
+                                attr { padding(16f) }
+                                Text { attr { fontSize(14f); color(Color(0xFF212121L)); text("段落内容已加载，显示为真实文字。") } }
+                            }
+                        }
                     }
                 }
+
+                sectionHeader("Skeleton 骨架屏 - 静态无动画 (none)")
+                toggleButton("切换", ctx.skPulseLoading, Color(0xFF607D8BL)) { ctx.skPulseLoading = !ctx.skPulseLoading }
+                Skeleton {
+                    attr {
+                        loading(ctx.skPulseLoading)
+                        preset(SkeletonPreset.card)
+                        animation(SkeletonAnimation.NONE)
+                        contentPadding(16f)
+                        content {
+                            View {
+                                attr { padding(16f); flexDirectionColumn() }
+                                View {
+                                    attr {
+                                        height(120f)
+                                        backgroundColor(Color(0xFFE8F5E9L))
+                                        borderRadius(6f)
+                                        marginBottom(10f)
+                                        justifyContentCenter()
+                                        alignItemsCenter()
+                                    }
+                                    Text { attr { fontSize(13f); color(Color(0xFF388E3CL)); text("卡片图片") } }
+                                }
+                                Text { attr { fontSize(15f); color(Color(0xFF212121L)); text("卡片标题已加载") } }
+                                Text { attr { fontSize(13f); color(Color(0xFF757575L)); marginTop(6f); text("卡片描述文字。") } }
+                            }
+                        }
+                    }
+                }
+
+                sectionHeader("Skeleton 骨架屏 - 自定义行配置")
+                toggleButton("切换", ctx.skCustomLoading, Color(0xFF00BCD4L)) { ctx.skCustomLoading = !ctx.skCustomLoading }
+                Skeleton {
+                    attr {
+                        loading(ctx.skCustomLoading)
+                        rows(
+                            SkeletonRow(height = 60f, isCircle = true),
+                            SkeletonRow(0.45f, 20f, 4f),
+                            SkeletonRow(0.30f, 13f),
+                            SkeletonRow(1f, 1f, 0f, marginBottom = 12f), // thin divider line
+                            SkeletonRow(1f, 80f, 6f),
+                            SkeletonRow(0.9f, 14f),
+                            SkeletonRow(0.65f, 14f),
+                        )
+                        animation(SkeletonAnimation.SHIMMER)
+                        baseColor(Color(0xFFE3F2FDL))
+                        highlightColor(Color(0xFFBBDEFBL))
+                        contentPadding(16f)
+                        content {
+                            View {
+                                attr { padding(16f) }
+                                Text { attr { fontSize(14f); color(Color(0xFF1976D2L)); text("自定义骨架屏内容已加载完成。") } }
+                            }
+                        }
+                    }
+                }
+
+                // Bottom padding
+                View { attr { height(32f) } }
             }
+
+            // Full-screen Loading overlays (placed outside Scroller to render on top)
             Loading {
                 attr {
                     visible(ctx.showFullScreen)
@@ -182,9 +340,7 @@ internal class LoadingViewDemoPage : BasePager() {
                     maskColor(Color(red255 = 0, green255 = 0, blue255 = 0, alpha01 = 0.5f))
                     timeoutMs(3000)
                 }
-                event {
-                    onTimeout { ctx.showFullScreen = false }
-                }
+                event { onTimeout { ctx.showFullScreen = false } }
             }
             Loading {
                 attr {
@@ -193,9 +349,7 @@ internal class LoadingViewDemoPage : BasePager() {
                     loadingText("3s 后自动关闭")
                     timeoutMs(3000)
                 }
-                event {
-                    onTimeout { ctx.showWithTimeout = false }
-                }
+                event { onTimeout { ctx.showWithTimeout = false } }
             }
             Loading {
                 attr {
@@ -205,9 +359,7 @@ internal class LoadingViewDemoPage : BasePager() {
                     indicatorSize(3f)
                     timeoutMs(3000)
                 }
-                event {
-                    onTimeout { ctx.showCustomSize = false }
-                }
+                event { onTimeout { ctx.showCustomSize = false } }
             }
             Loading {
                 attr {
@@ -228,9 +380,7 @@ internal class LoadingViewDemoPage : BasePager() {
                         }
                     }
                 }
-                event {
-                    onTimeout { ctx.showCustomContent = false }
-                }
+                event { onTimeout { ctx.showCustomContent = false } }
             }
             Loading {
                 attr {
@@ -240,9 +390,7 @@ internal class LoadingViewDemoPage : BasePager() {
                     delayMs(800)
                     timeoutMs(3000)
                 }
-                event {
-                    onTimeout { ctx.showWithDelay = false }
-                }
+                event { onTimeout { ctx.showWithDelay = false } }
             }
         }
     }
