@@ -887,13 +887,14 @@ function renderControls(comp) {
       ctrlGroup('操作数', `<input type="range" min="1" max="4" value="4" oninput="updateFabCount(this.value)">`) +
       `<hr class="ctrl-divider">` + codeBlock(dsl(`FloatButton {
   attr {
-    icon(<span class="str">"+"</span>)
+    iconUrl(<span class="num">null</span>)   <span class="cm">// null = built-in SVG "+" icon</span>
     color(FloatButtonColor.PRIMARY)
     bottom(<span class="num">32f</span>)
     right(<span class="num">24f</span>)
     actions(
-      FloatActionItem(<span class="str">"📷"</span>, <span class="str">"拍照"</span>),
-      FloatActionItem(<span class="str">"📁"</span>, <span class="str">"文件"</span>),
+      FloatActionItem(iconUrl = <span class="num">null</span>, label = <span class="str">"拍照"</span>),
+      FloatActionItem(iconUrl = <span class="num">null</span>, label = <span class="str">"文件"</span>),
+      FloatActionItem(iconUrl = <span class="str">"https://example.com/icon.png"</span>, label = <span class="str">"自定义"</span>),
     )
   }
 }`)) + `</div>`;
