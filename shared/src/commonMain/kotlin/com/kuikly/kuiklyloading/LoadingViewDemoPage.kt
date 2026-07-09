@@ -72,6 +72,12 @@ import com.tencent.kuiklybase.loading.TagStyle
 import com.tencent.kuiklybase.loading.Toast
 import com.tencent.kuiklybase.loading.ToastIcon
 import com.tencent.kuiklybase.loading.ToastPosition
+import com.tencent.kuiklybase.loading.Alert
+import com.tencent.kuiklybase.loading.AlertType
+import com.tencent.kuiklybase.loading.Statistic
+import com.tencent.kuiklybase.loading.FloatButton
+import com.tencent.kuiklybase.loading.FloatActionItem
+import com.tencent.kuiklybase.loading.FloatButtonColor
 
 @Page("LoadingViewDemoPage")
 internal class LoadingViewDemoPage : BasePager() {
@@ -1378,8 +1384,141 @@ internal class LoadingViewDemoPage : BasePager() {
                     }
                 }
 
+                // ── AlertView ───────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("警告条 Alert")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(12f)
+                        marginLeft(16f)
+                    }
+                }
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(8f) }
+                    Alert {
+                        attr {
+                            type(AlertType.SUCCESS)
+                            title("操作成功")
+                            description("您的申请已提交，等待审核。")
+                            closable(true)
+                        }
+                    }
+                    View { attr { height(8f) } }
+                    Alert {
+                        attr {
+                            type(AlertType.INFO)
+                            title("系统通知")
+                            description("系统将于今晚 22:00 进行例行维护，请注意保存数据。")
+                        }
+                    }
+                    View { attr { height(8f) } }
+                    Alert {
+                        attr {
+                            type(AlertType.WARNING)
+                            title("余额不足")
+                            description("您的账户余额即将耗尽，请及时充值。")
+                            closable(true)
+                        }
+                    }
+                    View { attr { height(8f) } }
+                    Alert {
+                        attr {
+                            type(AlertType.ERROR)
+                            title("提交失败")
+                            description("网络异常，请检查连接后重试。")
+                        }
+                    }
+                    View { attr { height(8f) } }
+                    Alert {
+                        attr {
+                            type(AlertType.INFO)
+                            title("仅标题，无描述")
+                            showIcon(false)
+                        }
+                    }
+                }
+
+                // ── StatisticView ────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("数字统计 Statistic")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(12f)
+                        marginLeft(16f)
+                    }
+                }
+                View {
+                    attr {
+                        flexDirectionRow()
+                        marginHorizontal(16f)
+                        marginBottom(16f)
+                    }
+                    View {
+                        attr { flex(1f); flexDirectionColumn() }
+                        Statistic {
+                            attr {
+                                title("注册用户")
+                                value(128456)
+                                suffix("人")
+                            }
+                        }
+                    }
+                    View {
+                        attr { flex(1f); flexDirectionColumn() }
+                        Statistic {
+                            attr {
+                                title("活跃率")
+                                value(78.5)
+                                suffix("%")
+                                precision(1)
+                                valueColor(Color(0xFF52C41AL))
+                            }
+                        }
+                    }
+                }
+                View {
+                    attr {
+                        flexDirectionRow()
+                        marginHorizontal(16f)
+                        marginBottom(16f)
+                    }
+                    View {
+                        attr { flex(1f); flexDirectionColumn() }
+                        Statistic {
+                            attr {
+                                title("今日收入")
+                                value(9988.0)
+                                prefix("¥")
+                                precision(2)
+                                valueColor(Color(0xFFFA8C16L))
+                            }
+                        }
+                    }
+                    View {
+                        attr { flex(1f); flexDirectionColumn() }
+                        Statistic {
+                            attr {
+                                title("待处理工单")
+                                value(42)
+                                valueColor(Color(0xFFFF4D4FL))
+                                thousandSeparator(false)
+                            }
+                        }
+                    }
+                }
+
                 // Bottom padding
-                View { attr { height(32f) } }
+                View { attr { height(80f) } }
             }
 
             // Full-screen Loading overlays (placed outside Scroller to render on top)
@@ -1452,6 +1591,30 @@ internal class LoadingViewDemoPage : BasePager() {
                     durationMs(2000)
                 }
                 event { onDismiss { ctx.toastVisible = false } }
+            }
+
+            // FloatButton demo - floats at bottom-right over all content
+            FloatButton {
+                attr {
+                    icon("+")
+                    color(FloatButtonColor.PRIMARY)
+                    bottom(32f)
+                    right(24f)
+                    actions(
+                        FloatActionItem("📷", "拍照", FloatButtonColor.PRIMARY),
+                        FloatActionItem("📁", "文件", FloatButtonColor.SUCCESS),
+                        FloatActionItem("✏️", "编辑", FloatButtonColor.WARNING),
+                        FloatActionItem("🗑", "删除", FloatButtonColor.DANGER),
+                    )
+                }
+                event {
+                    onActionClick { idx ->
+                        ctx.toastMsg = "点击了操作 ${idx + 1}"
+                        ctx.toastIcon = ToastIcon.NONE
+                        ctx.toastPos = ToastPosition.BOTTOM
+                        ctx.toastVisible = true
+                    }
+                }
             }
         }
     }
