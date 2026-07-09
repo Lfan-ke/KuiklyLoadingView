@@ -15,6 +15,7 @@
 
 package com.tencent.kuiklybase.loading
 
+import com.tencent.kuikly.core.base.Animation
 import com.tencent.kuikly.core.base.Color
 import com.tencent.kuikly.core.base.ComposeAttr
 import com.tencent.kuikly.core.base.ComposeEvent
@@ -301,6 +302,7 @@ class SkeletonView : ComposeView<SkeletonAttr, ComposeEvent>() {
         container.apply {
             ctx.attr.rows.forEachIndexed { rowIdx, row ->
                 val spacing = if (row.marginBottom >= 0f) row.marginBottom else ctx.attr.rowSpacing
+                val animDuration = if (ctx.attr.animation == SkeletonAnimation.PULSE) 0.75f else 0.45f
                 if (row.isCircle) {
                     View {
                         attr {
@@ -310,6 +312,7 @@ class SkeletonView : ComposeView<SkeletonAttr, ComposeEvent>() {
                             borderRadius(d / 2f)
                             backgroundColor(color)
                             marginBottom(spacing)
+                            animate(Animation.easeInOut(animDuration), ctx.animTick)
                         }
                     }
                 } else {
@@ -325,6 +328,7 @@ class SkeletonView : ComposeView<SkeletonAttr, ComposeEvent>() {
                                 flex(row.widthFraction.coerceIn(0.01f, 1f))
                                 borderRadius(radius)
                                 backgroundColor(color)
+                                animate(Animation.easeInOut(animDuration), ctx.animTick)
                             }
                         }
                         if (row.widthFraction < 0.99f) {
