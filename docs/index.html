@@ -60,6 +60,7 @@
 [data-theme="dark"] .demo span[style*="color:#666"]{color:#94a3b8!important}
 [data-theme="dark"] .demo span[style*="color:#aaa"]{color:#6b7280!important}
 [data-theme="dark"] .demo [style*="border:1px solid #e8e8e8"]{border-color:#374151!important}
+[data-theme="dark"] .demo [style*="border:1px solid #f0f0f0"]{border-color:#374151!important}
 [data-theme="dark"] .demo [style*="border-top:1px solid #f0f0f0"]{border-top-color:#374151!important}
 [data-theme="dark"] .demo [style*="border-top:1px solid #e8e8e8"]{border-top-color:#374151!important}
 [data-theme="dark"] #noticebar-el{background:#2b2111!important;border-color:#d97706!important}
@@ -1516,6 +1517,7 @@ function toggleTheme(){
     document.documentElement.setAttribute('data-theme', _darkMode?'dark':'light');
     document.getElementById('themeIconMoon').style.display = _darkMode?'none':'';
     document.getElementById('themeIconSun').style.display  = _darkMode?'':'none';
+    updateAlert();drawAllCircular();updateCDDisplay();renderLoadMore();renderCollapse();renderRateStars();renderWatermark();
   });
 })();
 
