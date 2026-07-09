@@ -23,7 +23,12 @@ import com.tencent.kuikly.core.views.ActivityIndicator
 import com.tencent.kuikly.core.views.Scroller
 import com.tencent.kuikly.core.views.Text
 import com.tencent.kuikly.core.views.View
+import com.tencent.kuiklybase.loading.CircularProgress
+import com.tencent.kuiklybase.loading.CircularProgressStyle
+import com.tencent.kuiklybase.loading.CircularProgressTheme
 import com.tencent.kuiklybase.loading.Loading
+import com.tencent.kuiklybase.loading.ResultType
+import com.tencent.kuiklybase.loading.ResultView
 import com.tencent.kuiklybase.loading.Skeleton
 import com.tencent.kuiklybase.loading.SkeletonAnimation
 import com.tencent.kuiklybase.loading.SkeletonPreset
@@ -56,6 +61,11 @@ internal class LoadingViewDemoPage : BasePager() {
     private var toastIcon by observable(ToastIcon.NONE)
     private var toastMsg by observable("")
     private var toastPos by observable(ToastPosition.CENTER)
+
+    // --- CircularProgress state ---
+    private var circProgress1 by observable(0.35f)
+    private var circProgress2 by observable(0.65f)
+    private var circProgress3 by observable(1f)
 
     // --- Skeleton state ---
     private var skArticleLoading by observable(true)
@@ -475,6 +485,121 @@ internal class LoadingViewDemoPage : BasePager() {
                     toastBtn("失败提示", ToastIcon.FAIL, "操作失败", ToastPosition.CENTER, Color(0xFFF5222DL))
                     toastBtn("警告提示 (顶部)", ToastIcon.WARNING, "请注意操作", ToastPosition.TOP, Color(0xFFFA8C16L))
                     toastBtn("纯文字 (底部)", ToastIcon.NONE, "消息已发送", ToastPosition.BOTTOM, Color(0xFF595959L))
+                }
+
+                // ================================================================
+                // ResultView Section
+                // ================================================================
+                sectionHeader("ResultView 结果页")
+
+                ResultView {
+                    attr {
+                        resultType(ResultType.SUCCESS)
+                        title("操作成功")
+                        description("您的申请已提交，正在等待审核")
+                        actionButton("查看详情", Color(0xFF52C41AL)) {}
+                    }
+                }
+                ResultView {
+                    attr {
+                        resultType(ResultType.ERROR)
+                        title("提交失败")
+                        description("网络异常，请检查连接后重试")
+                        actionButton("重 试") {}
+                        secondaryButton("返 回") {}
+                    }
+                }
+                ResultView {
+                    attr {
+                        resultType(ResultType.EMPTY)
+                        title("暂无数据")
+                        description("当前列表为空，请稍后再来")
+                        padding(32f)
+                    }
+                }
+                ResultView {
+                    attr {
+                        resultType(ResultType.NOT_FOUND)
+                        title("页面不存在")
+                        description("您访问的页面已被删除或不存在")
+                        actionButton("返回首页") {}
+                        padding(32f)
+                    }
+                }
+
+                // ================================================================
+                // CircularProgress Section
+                // ================================================================
+                sectionHeader("CircularProgress 环形进度")
+
+                // Increment button
+                View {
+                    attr {
+                        height(44f)
+                        backgroundColor(Color(0xFF1677FFL))
+                        borderRadius(8f)
+                        justifyContentCenter()
+                        alignItemsCenter()
+                        marginBottom(12f)
+                        marginLeft(16f)
+                        marginRight(16f)
+                    }
+                    event {
+                        click {
+                            ctx.circProgress1 = if (ctx.circProgress1 >= 1f) 0f else (ctx.circProgress1 + 0.1f).coerceAtMost(1f)
+                        }
+                    }
+                    Text {
+                        attr {
+                            color(Color.WHITE)
+                            fontSize(14f)
+                            text("模拟加载 (点击递增 +10%)")
+                        }
+                    }
+                }
+
+                View {
+                    attr {
+                        flexDirectionRow()
+                        justifyContentCenter()
+                        alignItemsCenter()
+                        padding(16f)
+                        marginBottom(8f)
+                    }
+                    CircularProgress {
+                        attr {
+                            progress(ctx.circProgress1)
+                            size(64f)
+                            theme(CircularProgressTheme.Blue)
+                            style(CircularProgressStyle.GRADIENT)
+                            strokeWidth(6f)
+                        }
+                        event { onComplete { ctx.toastMsg = "加载完成！"; ctx.toastVisible = true } }
+                    }
+                    View { attr { width(24f) } }
+                    CircularProgress {
+                        attr {
+                            progress(ctx.circProgress2)
+                            size(80f)
+                            theme(CircularProgressTheme.Green)
+                            style(CircularProgressStyle.DASHED)
+                            dashCount(36)
+                            strokeWidth(7f)
+                        }
+                    }
+                    View { attr { width(24f) } }
+                    CircularProgress {
+                        attr {
+                            progress(ctx.circProgress3)
+                            size(96f)
+                            theme(CircularProgressTheme.Orange)
+                            style(CircularProgressStyle.GRADIENT)
+                            label("完成")
+                            labelColor(Color(0xFFFA8C16L))
+                            showPercent(false)
+                            strokeWidth(8f)
+                        }
+                    }
                 }
 
                 // Bottom padding
