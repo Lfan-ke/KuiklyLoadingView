@@ -18,6 +18,7 @@ package com.kuikly.kuiklyloading
 import com.tencent.kuikly.core.annotations.Page
 import com.tencent.kuikly.core.base.Color
 import com.tencent.kuikly.core.base.ViewBuilder
+import com.tencent.kuikly.core.layout.FlexAlign
 import com.tencent.kuikly.core.reactive.handler.observable
 import com.tencent.kuikly.core.views.ActivityIndicator
 import com.tencent.kuikly.core.views.Scroller
@@ -42,7 +43,6 @@ import com.tencent.kuiklybase.loading.LoadMoreStyle
 import com.tencent.kuiklybase.loading.StepDirection
 import com.tencent.kuiklybase.loading.StepItem
 import com.tencent.kuiklybase.loading.StepProgress
-import com.tencent.kuiklybase.loading.StepProgressView
 import com.tencent.kuiklybase.loading.StepStatus
 import com.tencent.kuiklybase.loading.StepStyleType
 import com.tencent.kuiklybase.loading.Timeline
@@ -1374,6 +1374,139 @@ internal class LoadingViewDemoPage : BasePager() {
                                     Text { attr { text("内容区域"); fontSize(14f); color(Color(0xFF999999L)) } }
                                 }
                             }
+                        }
+                    }
+                }
+
+                // ── RatingView ──────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("评分 RatingView")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(16f)
+                        marginLeft(16f)
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("交互式 5 星 (默认)"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Rating {
+                        attr {
+                            value(ctx.ratingVal)
+                            showCount(true)
+                        }
+                        event { onChange { v -> ctx.ratingVal = v } }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("半星模式"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Rating {
+                        attr {
+                            value(ctx.ratingVal)
+                            allowHalf(true)
+                            icon(RatingIcon.STAR)
+                            size(28f)
+                            showCount(true)
+                        }
+                        event { onChange { v -> ctx.ratingVal = v } }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("只读 4.5 星"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Rating {
+                        attr {
+                            value(4.5f)
+                            allowHalf(true)
+                            readOnly(true)
+                            size(32f)
+                            showCount(true)
+                        }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("心形图标"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Rating {
+                        attr {
+                            value(ctx.ratingVal)
+                            icon(RatingIcon.HEART)
+                            activeColor(Color(0xFFFF4D4FL))
+                            size(28f)
+                            showCount(true)
+                        }
+                        event { onChange { v -> ctx.ratingVal = v } }
+                    }
+                }
+
+                // ── CountdownTimer ───────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("倒计时 CountdownTimer")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(16f)
+                        marginLeft(16f)
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(16f) }
+                    Text { attr { text("COLON 样式 - 2 分钟倒计时"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Countdown {
+                        attr {
+                            totalSeconds(120)
+                            style(CountdownStyle.COLON)
+                            format(CountdownFormat.MS)
+                            accentColor(Color(0xFF1677FFL))
+                            fontSize(22f)
+                            autoStart(true)
+                        }
+                        event { onFinish { ctx.cdRunning = false } }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(16f) }
+                    Text { attr { text("RING 样式 - 30 秒倒计时"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Countdown {
+                        attr {
+                            totalSeconds(30)
+                            style(CountdownStyle.RING)
+                            format(CountdownFormat.S)
+                            accentColor(Color(0xFF52C41AL))
+                            ringSize(88f)
+                            ringStrokeWidth(7f)
+                            autoStart(true)
+                        }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(16f) }
+                    Text { attr { text("TEXT 样式 - 自定义格式 {M}分{S}秒"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Countdown {
+                        attr {
+                            totalSeconds(90)
+                            style(CountdownStyle.TEXT)
+                            customFormat("{M}分{S}秒")
+                            color(Color(0xFFFA8C16L))
+                            fontSize(20f)
+                            autoStart(true)
                         }
                     }
                 }
