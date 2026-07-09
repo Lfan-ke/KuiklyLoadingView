@@ -78,6 +78,9 @@ import com.tencent.kuiklybase.loading.Statistic
 import com.tencent.kuiklybase.loading.FloatButton
 import com.tencent.kuiklybase.loading.FloatActionItem
 import com.tencent.kuiklybase.loading.FloatButtonColor
+import com.tencent.kuiklybase.loading.Collapse
+import com.tencent.kuiklybase.loading.CollapsePanel
+import com.tencent.kuiklybase.loading.CollapseTheme
 
 @Page("LoadingViewDemoPage")
 internal class LoadingViewDemoPage : BasePager() {
@@ -1512,6 +1515,97 @@ internal class LoadingViewDemoPage : BasePager() {
                                 value(42)
                                 valueColor(Color(0xFFFF4D4FL))
                                 thousandSeparator(false)
+                            }
+                        }
+                    }
+                }
+
+                // ── Collapse 折叠面板 ────────────────────────────────────────
+                sectionHeader("Collapse 折叠面板")
+                View {
+                    attr {
+                        flexDirectionColumn()
+                        marginLeft(16f)
+                        marginRight(16f)
+                        marginTop(8f)
+                        marginBottom(8f)
+                    }
+                    Collapse(theme = CollapseTheme.DEFAULT) {
+                        CollapsePanel {
+                            attr {
+                                title("常见问题一")
+                                subtitle("点击展开查看答案")
+                                content {
+                                    Text {
+                                        attr {
+                                            fontSize(14f)
+                                            color(Color(0xFF555555L))
+                                            text("这是折叠面板的内容区域，支持任意 View 嵌套。KuiklyUI 的折叠动画通过 opacity + maxHeight + animate 实现流畅展开/收起效果。")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        CollapsePanel {
+                            attr {
+                                title("常见问题二")
+                                content {
+                                    View {
+                                        attr { flexDirectionRow(); alignItemsCenter() }
+                                        View {
+                                            attr {
+                                                width(4f); height(40f)
+                                                borderRadius(2f)
+                                                backgroundColor(Color(0xFF1677FFL))
+                                                marginRight(12f)
+                                            }
+                                        }
+                                        Text {
+                                            attr {
+                                                fontSize(14f)
+                                                color(Color(0xFF555555L))
+                                                flex(1f)
+                                                text("支持在内容区嵌套任意组件，例如列表、图片或表单。")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        CollapsePanel {
+                            attr {
+                                title("已禁用面板")
+                                disabled(true)
+                                content {
+                                    Text { attr { text("此内容不可见") } }
+                                }
+                            }
+                        }
+                    }
+                    View { attr { height(12f) } }
+                    // Card theme
+                    Collapse(theme = CollapseTheme.CARD) {
+                        CollapsePanel {
+                            attr {
+                                title("卡片样式面板 A")
+                                theme(CollapseTheme.CARD)
+                                content {
+                                    Text {
+                                        attr { fontSize(13f); color(Color(0xFF666666L)); text("Card 主题自带圆角和阴影，适合信息卡片场景。") }
+                                    }
+                                }
+                            }
+                        }
+                        CollapsePanel {
+                            attr {
+                                title("卡片样式面板 B")
+                                theme(CollapseTheme.CARD)
+                                accentColor(Color(0xFF52C41AL))
+                                content {
+                                    Text {
+                                        attr { fontSize(13f); color(Color(0xFF666666L)); text("支持自定义展开箭头颜色：绿色。") }
+                                    }
+                                }
                             }
                         }
                     }
