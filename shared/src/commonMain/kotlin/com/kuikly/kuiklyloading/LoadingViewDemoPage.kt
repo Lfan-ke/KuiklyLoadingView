@@ -36,12 +36,20 @@ import com.tencent.kuiklybase.loading.SkeletonRow
 import com.tencent.kuiklybase.loading.ProgressBar
 import com.tencent.kuiklybase.loading.ProgressBarShape
 import com.tencent.kuiklybase.loading.SkeletonTheme
+import com.tencent.kuiklybase.loading.LoadMore
+import com.tencent.kuiklybase.loading.LoadMoreState
+import com.tencent.kuiklybase.loading.LoadMoreStyle
 import com.tencent.kuiklybase.loading.StepDirection
 import com.tencent.kuiklybase.loading.StepItem
 import com.tencent.kuiklybase.loading.StepProgress
 import com.tencent.kuiklybase.loading.StepProgressView
 import com.tencent.kuiklybase.loading.StepStatus
 import com.tencent.kuiklybase.loading.StepStyleType
+import com.tencent.kuiklybase.loading.Timeline
+import com.tencent.kuiklybase.loading.TimelineItem
+import com.tencent.kuiklybase.loading.TimelineItemStatus
+import com.tencent.kuiklybase.loading.TimelineMode
+import com.tencent.kuiklybase.loading.TimelineTheme
 import com.tencent.kuiklybase.loading.Toast
 import com.tencent.kuiklybase.loading.ToastIcon
 import com.tencent.kuiklybase.loading.ToastPosition
@@ -75,6 +83,12 @@ internal class LoadingViewDemoPage : BasePager() {
 
     // --- StepProgress state ---
     private var demoStep by observable(1)
+
+    // --- LoadMore state ---
+    private var loadMoreState by observable(LoadMoreState.IDLE)
+
+    // --- Timeline state ---
+    private var timelinePending by observable(true)
 
     // --- Skeleton state ---
     private var skArticleLoading by observable(true)
@@ -781,6 +795,136 @@ internal class LoadingViewDemoPage : BasePager() {
                             finishColor(Color(0xFF52C41AL))
                             processColor(Color(0xFF1677FFL))
                             waitColor(Color(0xFFD9D9D9L))
+                        }
+                    }
+                }
+
+                // ── LoadMore ─────────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("加载更多 LoadMore")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(16f)
+                        marginLeft(16f)
+                    }
+                }
+
+                // icon style
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(8f) }
+                    Text { attr { text("图标样式"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(4f) } }
+                    LoadMore {
+                        attr {
+                            state(ctx.loadMoreState)
+                            style(LoadMoreStyle.ICON)
+                        }
+                        event {
+                            onLoadMore {
+                                ctx.loadMoreState = LoadMoreState.LOADING
+                                setTimeout(pagerId, 2000) {
+                                    ctx.loadMoreState = LoadMoreState.SUCCESS
+                                    setTimeout(pagerId, 800) { ctx.loadMoreState = LoadMoreState.IDLE }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // divider style
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(8f) }
+                    Text { attr { text("分隔线样式"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(4f) } }
+                    LoadMore {
+                        attr {
+                            state(LoadMoreState.NO_MORE)
+                            style(LoadMoreStyle.DIVIDER)
+                        }
+                    }
+                }
+
+                // error state
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(8f) }
+                    Text { attr { text("错误状态 (点击重试)"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(4f) } }
+                    LoadMore {
+                        attr {
+                            state(LoadMoreState.ERROR)
+                            style(LoadMoreStyle.DEFAULT)
+                        }
+                    }
+                }
+
+                // ── Timeline ─────────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("时间轴 Timeline")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(16f)
+                        marginLeft(16f)
+                    }
+                }
+
+                // left mode with time column + pending
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text { attr { text("左侧模式 + pending"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Timeline {
+                        attr {
+                            items(
+                                TimelineItem("10:00", "订单创建", "用户提交订单 #20260701", TimelineItemStatus.SUCCESS),
+                                TimelineItem("10:05", "支付成功", "微信支付 ¥299.00", TimelineItemStatus.SUCCESS),
+                                TimelineItem("14:30", "仓库备货", "深圳仓库出库"),
+                                TimelineItem("次日", "运输中", "已交由顺丰快递", TimelineItemStatus.WARNING),
+                            )
+                            pending(ctx.timelinePending)
+                            pendingText("等待签收…")
+                        }
+                    }
+                }
+
+                // alternate mode
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text { attr { text("交替布局"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Timeline {
+                        attr {
+                            items(
+                                TimelineItem("2024 Q1", "成立公司", "在深圳注册"),
+                                TimelineItem("2024 Q2", "产品上线", "第一版发布", TimelineItemStatus.SUCCESS),
+                                TimelineItem("2024 Q3", "融资 A 轮", "完成 5000 万", TimelineItemStatus.SUCCESS),
+                                TimelineItem("2025 Q1", "海外扩张", "进入东南亚市场"),
+                                TimelineItem("2025 Q4", "IPO", "预计年底上市", TimelineItemStatus.PENDING),
+                            )
+                            mode(TimelineMode.ALTERNATE)
+                            showTime(false)
+                        }
+                    }
+                }
+
+                // error state with icon
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text { attr { text("自定义图标 + 错误状态"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Timeline {
+                        attr {
+                            items(
+                                TimelineItem("", "提交申请", icon = "📝", status = TimelineItemStatus.SUCCESS),
+                                TimelineItem("", "初审通过", icon = "✅", status = TimelineItemStatus.SUCCESS),
+                                TimelineItem("", "审核失败", icon = "❌", status = TimelineItemStatus.ERROR, description = "材料不完整，请补充"),
+                                TimelineItem("", "补充材料", icon = "📎", status = TimelineItemStatus.PENDING),
+                            )
+                            showTime(false)
+                            theme(TimelineTheme.BRAND)
                         }
                     }
                 }
