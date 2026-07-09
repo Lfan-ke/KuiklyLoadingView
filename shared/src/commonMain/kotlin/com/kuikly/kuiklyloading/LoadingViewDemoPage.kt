@@ -28,7 +28,12 @@ import com.tencent.kuiklybase.loading.Skeleton
 import com.tencent.kuiklybase.loading.SkeletonAnimation
 import com.tencent.kuiklybase.loading.SkeletonPreset
 import com.tencent.kuiklybase.loading.SkeletonRow
+import com.tencent.kuiklybase.loading.ProgressBar
+import com.tencent.kuiklybase.loading.ProgressBarShape
 import com.tencent.kuiklybase.loading.SkeletonTheme
+import com.tencent.kuiklybase.loading.Toast
+import com.tencent.kuiklybase.loading.ToastIcon
+import com.tencent.kuiklybase.loading.ToastPosition
 
 @Page("LoadingViewDemoPage")
 internal class LoadingViewDemoPage : BasePager() {
@@ -40,6 +45,17 @@ internal class LoadingViewDemoPage : BasePager() {
     private var showCustomSize by observable(false)
     private var showCustomContent by observable(false)
     private var showWithDelay by observable(false)
+
+    // --- ProgressBar state ---
+    private var progress1 by observable(0.3f)
+    private var progress2 by observable(0.7f)
+    private var progress3 by observable(0f)
+
+    // --- Toast state ---
+    private var toastVisible by observable(false)
+    private var toastIcon by observable(ToastIcon.NONE)
+    private var toastMsg by observable("")
+    private var toastPos by observable(ToastPosition.CENTER)
 
     // --- Skeleton state ---
     private var skArticleLoading by observable(true)
@@ -373,6 +389,94 @@ internal class LoadingViewDemoPage : BasePager() {
                     }
                 }
 
+                // ================================================================
+                // ProgressBar Section
+                // ================================================================
+                sectionHeader("ProgressBar 进度条")
+                View {
+                    attr { padding(16f); flexDirectionColumn() }
+                    Text { attr { fontSize(12f); color(Color(0xFF888888L)); marginBottom(6f); text("蓝青渐变 (30%)") } }
+                    ProgressBar {
+                        attr {
+                            progress(ctx.progress1)
+                            showLabel(true)
+                            trackHeight(10f)
+                        }
+                    }
+                    View { attr { height(16f) } }
+                    Text { attr { fontSize(12f); color(Color(0xFF888888L)); marginBottom(6f); text("绿色圆角 (70%)") } }
+                    ProgressBar {
+                        attr {
+                            progress(ctx.progress2)
+                            fillGradient(Color(0xFF52C41AL), Color(0xFF73D13DL))
+                            shape(ProgressBarShape.ROUNDED)
+                            showLabel(true)
+                            trackHeight(8f)
+                        }
+                    }
+                    View { attr { height(16f) } }
+                    Text { attr { fontSize(12f); color(Color(0xFF888888L)); marginBottom(6f); text("闪烁条纹 + 按钮控制") } }
+                    ProgressBar {
+                        attr {
+                            progress(ctx.progress3)
+                            striped(true)
+                            showLabel(true)
+                            trackHeight(12f)
+                        }
+                    }
+                    View { attr { height(10f) } }
+                    View {
+                        attr { flexDirectionRow(); marginBottom(4f) }
+                        View {
+                            attr {
+                                height(36f); paddingLeft(16f); paddingRight(16f)
+                                borderRadius(18f); backgroundColor(Color(0xFF888888L))
+                                justifyContentCenter(); alignItemsCenter(); marginRight(12f)
+                            }
+                            event { click { ctx.progress3 = 0f } }
+                            Text { attr { fontSize(13f); color(Color.WHITE); text("重置") } }
+                        }
+                        View {
+                            attr {
+                                height(36f); paddingLeft(16f); paddingRight(16f)
+                                borderRadius(18f); backgroundColor(Color(0xFF1677FFL))
+                                justifyContentCenter(); alignItemsCenter()
+                            }
+                            event { click { ctx.progress3 = (ctx.progress3 + 0.1f).coerceAtMost(1f) } }
+                            Text { attr { fontSize(13f); color(Color.WHITE); text("+10%") } }
+                        }
+                    }
+                }
+
+                // ================================================================
+                // Toast Section
+                // ================================================================
+                sectionHeader("Toast 轻提示")
+                View {
+                    attr { padding(16f); flexDirectionColumn() }
+
+                    fun toastBtn(label: String, i: ToastIcon, msg: String, p: ToastPosition, bg: Color = Color(0xFF1677FFL)) {
+                        View {
+                            attr {
+                                height(44f); backgroundColor(bg); borderRadius(8f)
+                                justifyContentCenter(); alignItemsCenter(); marginBottom(10f)
+                            }
+                            event {
+                                click {
+                                    ctx.toastIcon = i; ctx.toastMsg = msg
+                                    ctx.toastPos = p; ctx.toastVisible = true
+                                }
+                            }
+                            Text { attr { color(Color.WHITE); fontSize(14f); text(label) } }
+                        }
+                    }
+
+                    toastBtn("成功提示", ToastIcon.SUCCESS, "操作成功", ToastPosition.CENTER, Color(0xFF52C41AL))
+                    toastBtn("失败提示", ToastIcon.FAIL, "操作失败", ToastPosition.CENTER, Color(0xFFF5222DL))
+                    toastBtn("警告提示 (顶部)", ToastIcon.WARNING, "请注意操作", ToastPosition.TOP, Color(0xFFFA8C16L))
+                    toastBtn("纯文字 (底部)", ToastIcon.NONE, "消息已发送", ToastPosition.BOTTOM, Color(0xFF595959L))
+                }
+
                 // Bottom padding
                 View { attr { height(32f) } }
             }
@@ -437,6 +541,16 @@ internal class LoadingViewDemoPage : BasePager() {
                     timeoutMs(3000)
                 }
                 event { onTimeout { ctx.showWithDelay = false } }
+            }
+            Toast {
+                attr {
+                    visible(ctx.toastVisible)
+                    message(ctx.toastMsg)
+                    icon(ctx.toastIcon)
+                    position(ctx.toastPos)
+                    durationMs(2000)
+                }
+                event { onDismiss { ctx.toastVisible = false } }
             }
         }
     }
