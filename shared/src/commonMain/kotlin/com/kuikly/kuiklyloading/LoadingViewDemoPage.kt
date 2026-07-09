@@ -36,6 +36,12 @@ import com.tencent.kuiklybase.loading.SkeletonRow
 import com.tencent.kuiklybase.loading.ProgressBar
 import com.tencent.kuiklybase.loading.ProgressBarShape
 import com.tencent.kuiklybase.loading.SkeletonTheme
+import com.tencent.kuiklybase.loading.StepDirection
+import com.tencent.kuiklybase.loading.StepItem
+import com.tencent.kuiklybase.loading.StepProgress
+import com.tencent.kuiklybase.loading.StepProgressView
+import com.tencent.kuiklybase.loading.StepStatus
+import com.tencent.kuiklybase.loading.StepStyleType
 import com.tencent.kuiklybase.loading.Toast
 import com.tencent.kuiklybase.loading.ToastIcon
 import com.tencent.kuiklybase.loading.ToastPosition
@@ -66,6 +72,9 @@ internal class LoadingViewDemoPage : BasePager() {
     private var circProgress1 by observable(0.35f)
     private var circProgress2 by observable(0.65f)
     private var circProgress3 by observable(1f)
+
+    // --- StepProgress state ---
+    private var demoStep by observable(1)
 
     // --- Skeleton state ---
     private var skArticleLoading by observable(true)
@@ -598,6 +607,180 @@ internal class LoadingViewDemoPage : BasePager() {
                             labelColor(Color(0xFFFA8C16L))
                             showPercent(false)
                             strokeWidth(8f)
+                        }
+                    }
+                }
+
+                // ── StepProgress ────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("步骤条 StepProgress")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(16f)
+                        marginLeft(16f)
+                    }
+                }
+
+                // DEFAULT horizontal
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text {
+                        attr { text("默认样式 - 水平"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) }
+                    }
+                    StepProgress {
+                        attr {
+                            steps(
+                                StepItem("已下单", "2026-07-01"),
+                                StepItem("备货中", "等待仓库"),
+                                StepItem("运输中"),
+                                StepItem("已签收"),
+                            )
+                            current(ctx.demoStep)
+                        }
+                        event { onStepClick { idx -> ctx.demoStep = idx } }
+                    }
+                    View { attr { height(8f) } }
+                    // tap buttons to move step
+                    View {
+                        attr { flexDirectionRow(); marginTop(8f) }
+                        View {
+                            attr {
+                                height(32f)
+                                paddingLeft(16f)
+                                paddingRight(16f)
+                                borderRadius(4f)
+                                backgroundColor(Color(0xFF1677FFL))
+                                allCenter()
+                                marginRight(8f)
+                                opacity(if (ctx.demoStep > 0) 1f else 0.4f)
+                            }
+                            event { click { if (ctx.demoStep > 0) ctx.demoStep-- } }
+                            Text { attr { text("上一步"); fontSize(13f); color(Color(0xFFFFFFFFL)) } }
+                        }
+                        View {
+                            attr {
+                                height(32f)
+                                paddingLeft(16f)
+                                paddingRight(16f)
+                                borderRadius(4f)
+                                backgroundColor(Color(0xFF1677FFL))
+                                allCenter()
+                                opacity(if (ctx.demoStep < 3) 1f else 0.4f)
+                            }
+                            event { click { if (ctx.demoStep < 3) ctx.demoStep++ } }
+                            Text { attr { text("下一步"); fontSize(13f); color(Color(0xFFFFFFFFL)) } }
+                        }
+                    }
+                }
+
+                // DOT horizontal
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text {
+                        attr { text("点状样式 - 水平"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) }
+                    }
+                    StepProgress {
+                        attr {
+                            steps(
+                                StepItem("购物车"),
+                                StepItem("结算"),
+                                StepItem("支付"),
+                                StepItem("完成"),
+                            )
+                            current(ctx.demoStep)
+                            styleType(StepStyleType.DOT)
+                            dotSize(10f)
+                        }
+                    }
+                }
+
+                // NAVIGATION horizontal
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text {
+                        attr { text("导航样式"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) }
+                    }
+                    StepProgress {
+                        attr {
+                            steps(
+                                StepItem("基本信息"),
+                                StepItem("认证材料"),
+                                StepItem("审核确认"),
+                            )
+                            current(ctx.demoStep.coerceAtMost(2))
+                            styleType(StepStyleType.NAVIGATION)
+                            clickable(true)
+                        }
+                        event { onStepClick { idx -> ctx.demoStep = idx } }
+                    }
+                }
+
+                // DEFAULT vertical
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text {
+                        attr { text("默认样式 - 垂直"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) }
+                    }
+                    StepProgress {
+                        attr {
+                            steps(
+                                StepItem("注册账号", "填写邮箱和密码"),
+                                StepItem("完善资料", "姓名、头像等"),
+                                StepItem("实名认证", "需上传证件"),
+                                StepItem("开通服务"),
+                            )
+                            current(ctx.demoStep)
+                            direction(StepDirection.VERTICAL)
+                            clickable(true)
+                        }
+                        event { onStepClick { idx -> ctx.demoStep = idx } }
+                    }
+                }
+
+                // Error state demo
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text {
+                        attr { text("错误状态示例"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) }
+                    }
+                    StepProgress {
+                        attr {
+                            steps(
+                                StepItem("已提交", status = StepStatus.FINISH),
+                                StepItem("审核失败", status = StepStatus.ERROR),
+                                StepItem("补充材料", status = StepStatus.WAIT),
+                                StepItem("完成", status = StepStatus.WAIT),
+                            )
+                            styleType(StepStyleType.DEFAULT)
+                        }
+                    }
+                }
+
+                // Custom color - DOT vertical
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(20f) }
+                    Text {
+                        attr { text("自定义颜色 - 点状垂直"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) }
+                    }
+                    StepProgress {
+                        attr {
+                            steps(
+                                StepItem("设计", "UI/UX 评审通过"),
+                                StepItem("开发", "前后端并行"),
+                                StepItem("测试"),
+                                StepItem("上线"),
+                            )
+                            current(2)
+                            direction(StepDirection.VERTICAL)
+                            styleType(StepStyleType.DOT)
+                            finishColor(Color(0xFF52C41AL))
+                            processColor(Color(0xFF1677FFL))
+                            waitColor(Color(0xFFD9D9D9L))
                         }
                     }
                 }
