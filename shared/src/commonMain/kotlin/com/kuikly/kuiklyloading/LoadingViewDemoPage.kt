@@ -50,6 +50,14 @@ import com.tencent.kuiklybase.loading.TimelineItem
 import com.tencent.kuiklybase.loading.TimelineItemStatus
 import com.tencent.kuiklybase.loading.TimelineMode
 import com.tencent.kuiklybase.loading.TimelineTheme
+import com.tencent.kuiklybase.loading.Badge
+import com.tencent.kuiklybase.loading.BadgeColor
+import com.tencent.kuiklybase.loading.BadgeType
+import com.tencent.kuiklybase.loading.Tag
+import com.tencent.kuiklybase.loading.TagColor
+import com.tencent.kuiklybase.loading.TagGroup
+import com.tencent.kuiklybase.loading.TagShape
+import com.tencent.kuiklybase.loading.TagStyle
 import com.tencent.kuiklybase.loading.Toast
 import com.tencent.kuiklybase.loading.ToastIcon
 import com.tencent.kuiklybase.loading.ToastPosition
@@ -926,6 +934,142 @@ internal class LoadingViewDemoPage : BasePager() {
                             showTime(false)
                             theme(TimelineTheme.BRAND)
                         }
+                    }
+                }
+
+                // ── Tag ─────────────────────────────────────────────────────
+                View {
+                    attr { flexDirectionColumn(); marginBottom(24f) }
+                    Text {
+                        attr {
+                            text("标签 Tag")
+                            fontSize(16f)
+                            fontWeightSemiBold()
+                            color(Color(0xFF1A1A1AL))
+                            marginLeft(16f)
+                            marginBottom(12f)
+                        }
+                    }
+
+                    // styles row
+                    View {
+                        attr { flexDirectionRow(); marginHorizontal(16f); marginBottom(8f) }
+                        Tag {
+                            attr { text("Filled"); color(TagColor.PRIMARY); marginRight(8f) }
+                        }
+                        Tag {
+                            attr { text("Outline"); color(TagColor.PRIMARY); style(TagStyle.OUTLINE); marginRight(8f) }
+                        }
+                        Tag {
+                            attr { text("Ghost"); color(TagColor.PRIMARY); style(TagStyle.GHOST); marginRight(8f) }
+                        }
+                        Tag {
+                            attr { text("Plain"); color(TagColor.PRIMARY); style(TagStyle.PLAIN) }
+                        }
+                    }
+
+                    // shape row
+                    View {
+                        attr { flexDirectionRow(); marginHorizontal(16f); marginBottom(8f) }
+                        Tag {
+                            attr { text("Rounded"); color(TagColor.SUCCESS); marginRight(8f) }
+                        }
+                        Tag {
+                            attr { text("Pill"); color(TagColor.SUCCESS); shape(TagShape.PILL); marginRight(8f) }
+                        }
+                        Tag {
+                            attr { text("Square"); color(TagColor.SUCCESS); shape(TagShape.SQUARE) }
+                        }
+                    }
+
+                    // color presets
+                    TagGroup(8f) {
+                        attr { marginHorizontal(16f); marginBottom(8f) }
+                        listOf(TagColor.PRIMARY, TagColor.SUCCESS, TagColor.WARNING, TagColor.DANGER,
+                            TagColor.INFO, TagColor.PURPLE, TagColor.CYAN, TagColor.GOLD, TagColor.LIME)
+                            .forEach { c ->
+                                Tag {
+                                    attr {
+                                        text(c.name)
+                                        color(c)
+                                        style(TagStyle.GHOST)
+                                        marginRight(8f)
+                                        marginBottom(8f)
+                                    }
+                                }
+                            }
+                    }
+
+                    // closable + icon
+                    View {
+                        attr { flexDirectionRow(); marginHorizontal(16f) }
+                        Tag {
+                            attr { text("可关闭"); icon("🔖"); color(TagColor.WARNING); closable(true); marginRight(8f) }
+                        }
+                        Tag {
+                            attr { text("可选中"); color(TagColor.PURPLE); checkable(true); style(TagStyle.OUTLINE) }
+                        }
+                    }
+                }
+
+                // ── Badge ────────────────────────────────────────────────────
+                View {
+                    attr { flexDirectionColumn(); marginBottom(24f) }
+                    Text {
+                        attr {
+                            text("徽章 Badge")
+                            fontSize(16f)
+                            fontWeightSemiBold()
+                            color(Color(0xFF1A1A1AL))
+                            marginLeft(16f)
+                            marginBottom(12f)
+                        }
+                    }
+
+                    View {
+                        attr { flexDirectionRow(); flexWrap(com.tencent.kuikly.core.layout.FlexWrap.WRAP); marginHorizontal(16f); marginBottom(8f) }
+                        // count badges
+                        listOf(3, 99, 128).forEachIndexed { i, n ->
+                            Badge {
+                                attr {
+                                    type(BadgeType.COUNT)
+                                    count(n)
+                                    color(BadgeColor.RED)
+                                    marginRight(16f)
+                                }
+                            }
+                        }
+                        // dot badge
+                        Badge {
+                            attr { type(BadgeType.DOT); color(BadgeColor.GREEN); marginRight(16f) }
+                        }
+                        // text badge
+                        Badge {
+                            attr { type(BadgeType.TEXT); text("NEW"); color(BadgeColor.BLUE); marginRight(16f) }
+                        }
+                        Badge {
+                            attr { type(BadgeType.TEXT); text("HOT"); color(BadgeColor.ORANGE) }
+                        }
+                    }
+
+                    // ribbon badges on cards
+                    View {
+                        attr { flexDirectionRow(); marginHorizontal(16f) }
+                        listOf(BadgeColor.RED to "推荐", BadgeColor.PURPLE to "新品", BadgeColor.GREEN to "优惠")
+                            .forEach { (c, lbl) ->
+                                View {
+                                    attr {
+                                        width(80f); height(60f)
+                                        borderRadius(8f)
+                                        backgroundColor(Color(0xFFF5F5F5L))
+                                        marginRight(12f)
+                                        overflow(false)
+                                    }
+                                    Badge {
+                                        attr { type(BadgeType.RIBBON); text(lbl); color(c) }
+                                    }
+                                }
+                            }
                     }
                 }
 
