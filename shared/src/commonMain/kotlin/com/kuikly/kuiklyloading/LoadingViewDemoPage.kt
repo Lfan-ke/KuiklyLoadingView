@@ -28,6 +28,7 @@ import com.tencent.kuiklybase.loading.Skeleton
 import com.tencent.kuiklybase.loading.SkeletonAnimation
 import com.tencent.kuiklybase.loading.SkeletonPreset
 import com.tencent.kuiklybase.loading.SkeletonRow
+import com.tencent.kuiklybase.loading.SkeletonTheme
 
 @Page("LoadingViewDemoPage")
 internal class LoadingViewDemoPage : BasePager() {
@@ -47,6 +48,8 @@ internal class LoadingViewDemoPage : BasePager() {
     private var skPulseLoading by observable(true)
     private var skRoundLoading by observable(true)
     private var skCustomLoading by observable(true)
+    private var skDarkLoading by observable(true)
+    private var skBlueLoading by observable(true)
 
     override fun body(): ViewBuilder {
         val ctx = this
@@ -322,6 +325,49 @@ internal class LoadingViewDemoPage : BasePager() {
                             View {
                                 attr { padding(16f) }
                                 Text { attr { fontSize(14f); color(Color(0xFF1976D2L)); text("自定义骨架屏内容已加载完成。") } }
+                            }
+                        }
+                    }
+                }
+
+                sectionHeader("Skeleton 骨架屏 - 暗色主题 SkeletonTheme.DARK (shimmer)")
+                toggleButton("切换", ctx.skDarkLoading, Color(0xFF212121L)) { ctx.skDarkLoading = !ctx.skDarkLoading }
+                View {
+                    attr {
+                        backgroundColor(Color(0xFF1A1A1AL))
+                        padding(4f)
+                    }
+                    Skeleton {
+                        attr {
+                            loading(ctx.skDarkLoading)
+                            preset(SkeletonPreset.article)
+                            animation(SkeletonAnimation.SHIMMER)
+                            theme(SkeletonTheme.DARK)
+                            contentPadding(16f)
+                            content {
+                                View {
+                                    attr { padding(16f); flexDirectionColumn() }
+                                    Text { attr { fontSize(15f); color(Color(0xFFEEEEEEL)); text("暗色主题内容已加载") } }
+                                    Text { attr { fontSize(13f); color(Color(0xFFAAAAAL)); marginTop(8f); text("Dark theme content ready.") } }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                sectionHeader("Skeleton 骨架屏 - 蓝色主题 SkeletonTheme.BLUE (pulse)")
+                toggleButton("切换", ctx.skBlueLoading, Color(0xFF1677FFL)) { ctx.skBlueLoading = !ctx.skBlueLoading }
+                Skeleton {
+                    attr {
+                        loading(ctx.skBlueLoading)
+                        preset(SkeletonPreset.card)
+                        animation(SkeletonAnimation.PULSE)
+                        theme(SkeletonTheme.BLUE)
+                        contentPadding(16f)
+                        content {
+                            View {
+                                attr { padding(16f) }
+                                Text { attr { fontSize(14f); color(Color(0xFF1677FFL)); text("蓝色主题内容已加载完成。") } }
                             }
                         }
                     }
