@@ -10,83 +10,114 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --accent:#7c3aed;--accent2:#ec4899;
+  --accent-rgb:124,58,237;
   --blue:#3b82f6;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--purple:#7c3aed;
-  --sidebar-bg:#1a1625;--sidebar-text:#9d93b8;--sidebar-active:#7c3aed;
-  --border:#f0f0f0;--card-shadow:0 2px 8px rgba(0,0,0,.1);
+  --sidebar-bg:#0d1117;--sidebar-text:#8b949e;--sidebar-active:#7c3aed;
+  --border:#e8ecf4;--card-shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --card-shadow-hover:0 8px 24px rgba(0,0,0,.12);
   --phone-w:280px;--phone-h:560px;
+  --radius:12px;--radius-sm:8px;
+  --transition:.2s ease;
 }
-body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft YaHei UI','Microsoft YaHei','微软雅黑','JetBrains Mono',system-ui,-apple-system,sans-serif;background:#f0edfb;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft YaHei UI','Microsoft YaHei','微软雅黑','JetBrains Mono',system-ui,-apple-system,sans-serif;background:#f4f2fb;display:flex;flex-direction:column;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
 
 /* ── Top bar ── */
 #topbar{
-  height:52px;background:linear-gradient(135deg,#7c3aed 0%,#ec4899 100%);
+  height:58px;background:linear-gradient(135deg,#5b21b6 0%,#7c3aed 40%,#a855f7 70%,#ec4899 100%);
   display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;
-  box-shadow:0 2px 12px rgba(124,58,237,.35)
+  box-shadow:0 2px 16px rgba(124,58,237,.4);
 }
-#topbar .logo{color:#fff;font-size:15px;font-weight:700;letter-spacing:.3px;flex:1}
-#topbar a{color:rgba(255,255,255,.85);font-size:12px;text-decoration:none;display:flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid rgba(255,255,255,.3);border-radius:6px;transition:all .2s}
-#topbar a:hover{background:rgba(255,255,255,.15);color:#fff}
-#theme-toggle{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s}
-#theme-toggle:hover{background:rgba(255,255,255,.25)}
+#topbar .logo{color:#fff;font-size:15px;font-weight:700;letter-spacing:.3px;flex:1;display:flex;align-items:center;gap:10px}
+#topbar .logo-icon{width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;border:1px solid rgba(255,255,255,.2)}
+#topbar .logo-text{display:flex;flex-direction:column;line-height:1.2}
+#topbar .logo-subtitle{font-size:10px;font-weight:400;opacity:.7;letter-spacing:.5px}
+#topbar a{color:rgba(255,255,255,.9);font-size:12px;text-decoration:none;display:flex;align-items:center;gap:5px;padding:6px 12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;transition:all .2s}
+#topbar a:hover{background:rgba(255,255,255,.22);color:#fff;transform:translateY(-1px)}
+#theme-toggle{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .2s}
+#theme-toggle:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
 
 /* ── Body row ── */
 #body-row{flex:1;display:flex;overflow:hidden}
 
 /* ── Sidebar ── */
-#sidebar{width:218px;background:var(--sidebar-bg);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;padding-bottom:12px}
-#sidebar .version{color:#4a3d6b;font-size:11px;padding:12px 16px 4px}
-.cat-label{color:#4a3d6b;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:14px 16px 4px}
-.nav-item{display:block;padding:7px 16px;color:var(--sidebar-text);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;user-select:none}
-.nav-item:hover{color:#d4c8f8;background:rgba(124,58,237,.08)}
-.nav-item.active{color:#fff;background:rgba(124,58,237,.2);border-left-color:var(--accent)}
+#sidebar{width:224px;background:var(--sidebar-bg);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;padding-bottom:16px;border-right:1px solid rgba(255,255,255,.05)}
+#sidebar::-webkit-scrollbar{width:4px}
+#sidebar::-webkit-scrollbar-thumb{background:#2a2a3a;border-radius:2px}
+#sidebar .sidebar-search{padding:10px 12px;position:sticky;top:0;background:var(--sidebar-bg);z-index:2}
+#sidebar .sidebar-search input{width:100%;padding:7px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.06);color:#c9d1d9;font-size:12px;outline:none;font-family:inherit;transition:border-color .2s}
+#sidebar .sidebar-search input:focus{border-color:rgba(124,58,237,.5);background:rgba(255,255,255,.1)}
+#sidebar .sidebar-search input::placeholder{color:#484f58}
+#sidebar .version{color:#484f58;font-size:10px;padding:8px 16px 2px;letter-spacing:.5px}
+.cat-label{color:#484f58;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;padding:12px 16px 4px}
+.nav-item{display:block;padding:7px 16px;color:var(--sidebar-text);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;user-select:none;border-radius:0 6px 6px 0;margin-right:6px}
+.nav-item:hover{color:#c9d1d9;background:rgba(255,255,255,.06);border-left-color:rgba(124,58,237,.4)}
+.nav-item.active{color:#f0e6ff;background:rgba(124,58,237,.18);border-left-color:var(--accent);font-weight:500}
 
 /* ── Main area ── */
 #main{flex:1;display:flex;overflow:hidden}
 
 /* ── Center: phone frame ── */
-#center{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
-.phone-wrap{position:relative}
+#center{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.08) 0%,transparent 70%)}
+.phone-wrap{position:relative;filter:drop-shadow(0 20px 60px rgba(0,0,0,.3))}
 .phone{
   width:var(--phone-w);height:var(--phone-h);
-  background:#fff;border-radius:36px;
-  box-shadow:0 0 0 8px #1a1a1a,0 0 0 10px #333,0 20px 60px rgba(0,0,0,.4);
+  background:#1c1c1e;border-radius:44px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 0 0 2px #5a5a5c,0 0 0 9px #1c1c1e,0 0 0 11px #3a3a3c;
   overflow:hidden;position:relative;display:flex;flex-direction:column
 }
-.phone-notch{
-  height:32px;background:#1a1a1a;display:flex;align-items:flex-end;justify-content:center;
-  padding-bottom:6px;flex-shrink:0
+.phone-status{
+  height:44px;background:#1c1c1e;display:flex;align-items:center;
+  padding:0 20px;flex-shrink:0;
+  color:rgba(255,255,255,.9);font-size:11px;font-weight:600
 }
-.phone-notch-inner{width:90px;height:20px;background:#1a1a1a;border-radius:0 0 14px 14px}
+.phone-status-time{flex:1}
+.phone-status-icons{display:flex;gap:5px;align-items:center}
+.phone-status-icons svg{width:14px;height:14px;fill:rgba(255,255,255,.9)}
 .phone-screen{flex:1;overflow:hidden;position:relative;background:#f5f5f5}
+.phone-home{height:5px;background:rgba(255,255,255,.3);border-radius:3px;width:120px;margin:8px auto;flex-shrink:0}
 
 /* ── Component demo areas ── */
 .demo{display:none;width:100%;height:100%;overflow-y:auto;flex-direction:column;align-items:center;padding:0}
-.demo.active{display:flex}
+.demo.active{display:flex;animation:fadeSlideIn .25s ease}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ── Right: controls ── */
-#controls{width:300px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:0}
-.ctrl-header{padding:16px 20px 12px;border-bottom:1px solid var(--border)}
-.ctrl-header h2{font-size:16px;font-weight:700;color:#1a1a1a}
-.ctrl-header p{font-size:12px;color:#888;margin-top:3px}
+#controls{width:308px;background:rgba(255,255,255,.98);border-left:1px solid #e8ecf4;overflow-y:auto;flex-shrink:0;padding:0}
+#controls::-webkit-scrollbar{width:4px}
+#controls::-webkit-scrollbar-thumb{background:#d0d0d8;border-radius:2px}
+.ctrl-header{padding:18px 20px 14px;border-bottom:1px solid #f0f0f0;background:linear-gradient(135deg,rgba(124,58,237,.04) 0%,rgba(236,72,153,.03) 100%)}
+.ctrl-header h2{font-size:15px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+.ctrl-header h2::before{content:'';width:3px;height:16px;background:linear-gradient(to bottom,#7c3aed,#ec4899);border-radius:2px;display:inline-block}
+.ctrl-header p{font-size:11.5px;color:#888;margin-top:4px}
 .ctrl-body{padding:16px 20px}
-.ctrl-group{margin-bottom:16px}
-.ctrl-group label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:6px}
-.ctrl-group input[type=range]{width:100%;accent-color:var(--accent)}
+.ctrl-group{margin-bottom:18px}
+.ctrl-group>label{display:block;font-size:11px;font-weight:600;color:#6b7280;margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px}
+.ctrl-group input[type=range]{width:100%;height:4px;-webkit-appearance:none;appearance:none;border-radius:2px;background:linear-gradient(to right,var(--accent) 0%,var(--accent) 60%,#e2e8f0 60%,#e2e8f0 100%);outline:none;cursor:pointer}
+.ctrl-group input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:#fff;border:2px solid var(--accent);border-radius:50%;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .15s}
+.ctrl-group input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
 .ctrl-group input[type=text],.ctrl-group select,.ctrl-group input[type=number]{
-  width:100%;padding:6px 10px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none
+  width:100%;padding:7px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;font-family:inherit;transition:border-color .2s,box-shadow .2s;background:#fff;color:#1a1a2e
 }
-.ctrl-group input[type=text]:focus,.ctrl-group select:focus{border-color:var(--accent)}
+.ctrl-group input[type=text]:focus,.ctrl-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
 .ctrl-row{display:flex;gap:6px;flex-wrap:wrap}
 .ctrl-btn{
-  padding:5px 12px;border:1px solid #d9d9d9;border-radius:6px;font-size:12px;cursor:pointer;
-  background:#fff;transition:all .2s;color:#333
+  padding:5px 13px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;cursor:pointer;
+  background:#fff;transition:all .2s;color:#374151;font-family:inherit;font-weight:500
 }
-.ctrl-btn.active,.ctrl-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
-.ctrl-toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:#333;cursor:pointer}
-.ctrl-toggle input{accent-color:var(--accent)}
-.code-block{background:#1e1e3f;border-radius:8px;padding:12px 14px;font-family:'JetBrains Mono','Fira Code','HarmonyOS Sans SC',monospace;font-size:10.5px;color:#cdd3de;line-height:1.6;overflow-x:auto;white-space:pre;margin-top:8px}
-.code-block .kw{color:#c792ea}.code-block .fn{color:#82aaff}.code-block .str{color:#c3e88d}.code-block .num{color:#f78c6c}
-.ctrl-divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+.ctrl-btn.active,.ctrl-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.3)}
+.ctrl-toggle{display:flex;align-items:center;gap:10px;font-size:13px;color:#374151;cursor:pointer;padding:4px 0}
+.ctrl-toggle input[type=checkbox]{width:36px;height:20px;-webkit-appearance:none;appearance:none;background:#d1d5db;border-radius:10px;cursor:pointer;transition:background .2s;position:relative;flex-shrink:0}
+.ctrl-toggle input[type=checkbox]::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.ctrl-toggle input[type=checkbox]:checked{background:var(--accent)}
+.ctrl-toggle input[type=checkbox]:checked::after{transform:translateX(16px)}
+.code-block{background:#1e1e2e;border-radius:10px;overflow:hidden;margin-top:10px;border:1px solid rgba(255,255,255,.06)}
+.code-block-header{display:flex;align-items:center;padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.code-dots{display:flex;gap:6px}
+.code-dots span{width:12px;height:12px;border-radius:50%}
+.code-dots .r{background:#ff5f57}.code-dots .y{background:#febc2e}.code-dots .g{background:#28c840}
+.code-body{padding:12px 14px;font-family:'JetBrains Mono','Fira Code','HarmonyOS Sans SC',monospace;font-size:10.5px;color:#cdd3de;line-height:1.6;overflow-x:auto;white-space:pre}
+.code-block .kw{color:#c792ea}.code-block .fn{color:#82aaff}.code-block .str{color:#c3e88d}.code-block .num{color:#f78c6c}.code-block .cm{color:#546e7a}
+.ctrl-divider{border:none;border-top:1px solid #f0f0f0;margin:16px 0}
 
 /* ── Global utilities ── */
 .spinner{
@@ -110,7 +141,13 @@ body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft 
 
 <!-- ─── Top Bar ─── -->
 <header id="topbar">
-  <div class="logo">&#9889; KuiklyLoadingView</div>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div class="logo-text">
+      <span>KuiklyLoadingView</span>
+      <span class="logo-subtitle">Loading &amp; UI Components</span>
+    </div>
+  </div>
   <a href="https://github.com/Lfan-ke/KuiklyLoadingView" target="_blank">
     <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
     GitHub
@@ -122,7 +159,10 @@ body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft 
 
 <!-- ─── Sidebar ─── -->
 <nav id="sidebar">
-  <h1>KuiklyLoadingView</h1>
+  <h1 style="display:none">KuiklyLoadingView</h1>
+  <div class="sidebar-search">
+    <input type="search" id="sidebar-search" placeholder="Search components..." oninput="filterSidebar(this.value)">
+  </div>
   <div class="version">v1.0 · 20 Components</div>
 
   <div class="cat-label">Overlay / Feedback</div>
@@ -161,7 +201,14 @@ body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft 
   <div id="center">
     <div class="phone-wrap">
       <div class="phone">
-        <div class="phone-notch"><div class="phone-notch-inner"></div></div>
+        <div class="phone-status">
+          <span class="phone-status-time">9:41</span>
+          <div class="phone-status-icons">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.5 8.5C5.14 4.86 10.07 3 15 3s9.86 1.86 13.5 5.5L27 10c-3.27-3.27-7.78-5-12-5S5.27 6.73 2 10L.5 8.5z"/><path d="M5.5 12.5C8.06 9.94 11.43 8.5 15 8.5s6.94 1.44 9.5 4L23 14c-2.2-2.2-5.23-3.5-8-3.5s-5.8 1.3-8 3.5L5.5 12.5z"/><circle cx="15" cy="19" r="2"/></svg>
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="16" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M22 11v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="4" y="9" width="8" height="6" rx="1" fill="currentColor"/></svg>
+          </div>
+        </div>
+        <div style="height:0;position:relative;z-index:3"><div style="width:120px;height:34px;background:#1c1c1e;border-radius:0 0 20px 20px;border:2px solid #2d2d2d;border-top:none;margin:0 auto"></div></div>
         <div class="phone-screen" id="phoneScreen">
 
           <!-- 1. LoadingView -->
@@ -503,6 +550,7 @@ body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft 
           </div>
 
         </div><!-- /phone-screen -->
+        <div class="phone-home"></div>
       </div><!-- /phone -->
     </div>
   </div><!-- /center -->
@@ -560,6 +608,7 @@ function ctrlBtns(id, options, active, onclick) {
 
 const dslColors = {kw:'#c792ea',fn:'#82aaff',str:'#c3e88d',num:'#f78c6c'};
 function dsl(s){return s.replace(/\b(fun|val|var|if|when|true|false|null|data|class|internal|override)\b/g,`<span class="kw">$1</span>`).replace(/\b([A-Z][a-z]+(?:[A-Z][a-z]*)*)\s*\{/g,`<span class="fn">$1</span> {`)}
+function codeBlock(content){return `<div class="code-block"><div class="code-block-header"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div></div><div class="code-body">${content}</div></div>`;}
 
 // ─── Loading Controls ─────────────────────────────────────────────────────────
 let loadingState = {show:false, text:'加载中...', opacity:0.5};
@@ -569,15 +618,14 @@ function renderControls(comp) {
       ctrlGroup('显示状态', `<label class="ctrl-toggle"><input type="checkbox" id="ld-show" onchange="toggleLoading(this.checked)"> 显示遮罩</label>`) +
       ctrlGroup('提示文字', `<input type="text" id="ld-txt" value="加载中..." oninput="updateLoadingText(this.value)">`) +
       ctrlGroup('遮罩透明度', `<input type="range" min="0.2" max="0.9" step="0.05" value="0.5" id="ld-opacity" oninput="updateLoadingOpacity(this.value)">`) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Loading {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Loading {
   attr {
     visible(<span class="num">true</span>)
     fullScreen(<span class="num">true</span>)
     loadingText(<span class="str">"加载中..."</span>)
     maskColor(Color(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.5f</span>))
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
   }
   else if (comp === 'toast') {
     ctrl.innerHTML = ctrlHeader('Toast','轻提示浮层') +
@@ -585,8 +633,7 @@ function renderControls(comp) {
       ctrlGroup('弹出位置', ctrlBtns('t-pos',['顶部','中间','底部'],'中间','setToastPos')) +
       ctrlGroup('提示内容', `<input type="text" id="t-msg" value="操作成功">`) +
       `<div class="ctrl-group"><button class="ctrl-btn active" style="width:100%" onclick="showToast()">▶ 显示 Toast</button></div>
-      <hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Toast {
+      <hr class="ctrl-divider">` + codeBlock(dsl(`Toast {
   attr {
     visible(<span class="num">true</span>)
     message(<span class="str">"操作成功"</span>)
@@ -594,22 +641,21 @@ function renderControls(comp) {
     position(ToastPosition.CENTER)
     durationMs(<span class="num">2000</span>)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
   }
   else if (comp === 'spin') {
     ctrl.innerHTML = ctrlHeader('Spin','局部容器加载') +
       ctrlGroup('显示状态', `<label class="ctrl-toggle"><input type="checkbox" id="sp-show" onchange="toggleSpin(this.checked)"> 显示加载</label>`) +
       ctrlGroup('提示文字', `<input type="text" id="sp-tip" value="加载中..." oninput="updateSpinTip(this.value)">`) +
       ctrlGroup('尺寸', ctrlBtns('sp-sz',['小','中','大'],'中','setSpinSize')) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Spin {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Spin {
   attr {
     visible(<span class="num">true</span>)
     tip(<span class="str">"加载中..."</span>)
     size(SpinSize.DEFAULT)
   }
   content { /* ... */ }
-}`)}</div></div>`;
+}`)) + `</div>`;
   }
   else if (comp === 'result') {
     ctrl.innerHTML = ctrlHeader('Result','结果页面') +
@@ -620,14 +666,13 @@ function renderControls(comp) {
       </select>`) +
       ctrlGroup('标题', `<input type="text" id="res-title" value="操作成功" oninput="updateResult()">`) +
       ctrlGroup('副标题', `<input type="text" id="res-sub" value="您的操作已成功完成" oninput="updateResult()">`) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`ResultView {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`ResultView {
   attr {
     type(ResultType.SUCCESS)
     title(<span class="str">"操作成功"</span>)
     subtitle(<span class="str">"数据已保存"</span>)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
   }
   else if (comp === 'alert') {
     ctrl.innerHTML = ctrlHeader('Alert','内嵌警告条') +
@@ -636,15 +681,14 @@ function renderControls(comp) {
       ctrlGroup('描述', `<input type="text" id="al-desc" value="这是一条提示消息。" oninput="updateAlert()">`) +
       ctrlGroup('选项', `<label class="ctrl-toggle"><input type="checkbox" id="al-icon" checked onchange="updateAlert()"> 显示图标</label>
         <label class="ctrl-toggle" style="margin-top:6px"><input type="checkbox" id="al-close" checked onchange="updateAlert()"> 可关闭</label>`) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Alert {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Alert {
   attr {
     type(AlertType.INFO)
     title(<span class="str">"提示信息"</span>)
     description(<span class="str">"消息内容"</span>)
     closable(<span class="num">true</span>)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     updateAlert();
   }
   else if (comp === 'progressbar') {
@@ -653,8 +697,7 @@ function renderControls(comp) {
       ctrlGroup('颜色', ctrlBtns('pb-c',['蓝色','绿色','橙色','红色'],'蓝色','setPBColor')) +
       ctrlGroup('形状', ctrlBtns('pb-s',['ROUNDED','SQUARE'],'ROUNDED','setPBShape')) +
       `<div class="ctrl-group"><button class="ctrl-btn active" style="width:100%" onclick="animatePB()">▶ 动画演示</button></div>
-      <hr class="ctrl-divider">
-      <div class="code-block">${dsl(`ProgressBar {
+      <hr class="ctrl-divider">` + codeBlock(dsl(`ProgressBar {
   attr {
     progress(<span class="num">0.6f</span>)
     shape(ProgressBarShape.ROUNDED)
@@ -663,22 +706,21 @@ function renderControls(comp) {
       Color(<span class="num">0xFF40A9FFL</span>)
     )
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
   }
   else if (comp === 'circularprogress') {
     ctrl.innerHTML = ctrlHeader('CircularProgress','环形进度') +
       ctrlGroup('进度值', `<input type="range" min="0" max="100" value="65" oninput="updateCircular(this.value)">`) +
       ctrlGroup('样式', ctrlBtns('cp-s',['SOLID','GRADIENT','DASHED'],'SOLID','setCircStyle')) +
       ctrlGroup('描边宽度', `<input type="range" min="4" max="18" value="10" oninput="updateCircStroke(this.value)">`) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`CircularProgress {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`CircularProgress {
   attr {
     progress(<span class="num">0.65f</span>)
     style(CircularProgressStyle.SOLID)
     strokeWidth(<span class="num">10f</span>)
     size(<span class="num">120f</span>)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     setTimeout(drawAllCircular, 50);
   }
   else if (comp === 'stepprogress') {
@@ -686,8 +728,7 @@ function renderControls(comp) {
       ctrlGroup('步骤数', `<input type="range" min="2" max="5" value="4" oninput="updateStepCount(this.value)">`) +
       ctrlGroup('当前步骤', `<input type="range" min="1" max="4" value="2" id="step-cur" oninput="updateStepCur(this.value)">`) +
       ctrlGroup('样式', ctrlBtns('st-s',['HORIZONTAL','VERTICAL','DOT','NAVIGATION'],'HORIZONTAL','setStepStyle')) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`StepProgress {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`StepProgress {
   attr {
     steps(listOf(
       StepItem(<span class="str">"填写"</span>,StepStatus.COMPLETED),
@@ -696,15 +737,14 @@ function renderControls(comp) {
     ))
     direction(StepDirection.HORIZONTAL)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderSteps();
   }
   else if (comp === 'loadmore') {
     ctrl.innerHTML = ctrlHeader('LoadMore','加载更多') +
       ctrlGroup('状态', ctrlBtns('lm-s',['IDLE','LOADING','SUCCESS','NO_MORE','ERROR'],'IDLE','setLoadMoreState')) +
       `<div class="ctrl-group"><button class="ctrl-btn active" style="width:100%" onclick="triggerLoadMore()">▶ 模拟加载</button></div>
-      <hr class="ctrl-divider">
-      <div class="code-block">${dsl(`LoadMore {
+      <hr class="ctrl-divider">` + codeBlock(dsl(`LoadMore {
   attr {
     state(LoadMoreState.IDLE)
     style(LoadMoreStyle.DEFAULT)
@@ -712,14 +752,13 @@ function renderControls(comp) {
   event {
     onLoadMore { /* fetch next page */ }
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderLoadMore();
   }
   else if (comp === 'statistic') {
     ctrl.innerHTML = ctrlHeader('Statistic','数字统计') +
       `<div class="ctrl-group"><button class="ctrl-btn active" style="width:100%" onclick="renderStatistic(true)">▶ 重新播放动画</button></div>
-      <hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Statistic {
+      <hr class="ctrl-divider">` + codeBlock(dsl(`Statistic {
   attr {
     title(<span class="str">"总收入"</span>)
     value(<span class="num">128450.0</span>)
@@ -727,7 +766,7 @@ function renderControls(comp) {
     precision(<span class="num">2</span>)
     countUpDuration(<span class="num">800</span>)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderStatistic(true);
   }
   else if (comp === 'countdown') {
@@ -738,15 +777,14 @@ function renderControls(comp) {
         <div class="ctrl-btn" onclick="pauseCountdown()">⏸ 暂停</div>
         <div class="ctrl-btn" onclick="resetCountdown()">↺ 重置</div>
       </div>
-      <hr class="ctrl-divider">
-      <div class="code-block">${dsl(`CountDown {
+      <hr class="ctrl-divider">` + codeBlock(dsl(`CountDown {
   attr {
     totalMs(<span class="num">30000</span>)
     style(CountDownStyle.COLON)
     format(CountDownFormat.HH_MM_SS)
   }
   event { onFinish { /* done */ } }
-}`)}</div></div>`;
+}`)) + `</div>`;
     startCountdown();
   }
   else if (comp === 'skeleton') {
@@ -754,23 +792,21 @@ function renderControls(comp) {
       ctrlGroup('动画类型', ctrlBtns('sk-a',['shimmer','pulse','none'],'shimmer','setSkAnim')) +
       ctrlGroup('预设', ctrlBtns('sk-p',['文章','用户卡','列表'],'文章','setSkPreset')) +
       ctrlGroup('主题', ctrlBtns('sk-t',['LIGHT','DARK','BLUE'],'LIGHT','setSkTheme')) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Skeleton {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Skeleton {
   attr {
     preset(SkeletonPreset.ARTICLE)
     animation(SkeletonAnimation.SHIMMER)
     theme(SkeletonTheme.LIGHT)
     loading(<span class="num">true</span>)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderSkeleton();
   }
   else if (comp === 'timeline') {
     ctrl.innerHTML = ctrlHeader('Timeline','时间轴') +
       ctrlGroup('模式', ctrlBtns('tl-m',['LEFT','RIGHT','ALTERNATE'],'LEFT','setTimelineMode')) +
       ctrlGroup('主题', ctrlBtns('tl-t',['DEFAULT','PRIMARY','SUCCESS'],'DEFAULT','setTimelineTheme')) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Timeline {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Timeline {
   attr {
     mode(TimelineMode.LEFT)
     theme(TimelineTheme.DEFAULT)
@@ -780,7 +816,7 @@ function renderControls(comp) {
       TimelineItem(<span class="str">"待收货"</span>,TimelineItemStatus.PENDING),
     ))
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderTimeline();
   }
   else if (comp === 'badge') {
@@ -788,8 +824,7 @@ function renderControls(comp) {
       ctrlGroup('类型', ctrlBtns('bg-t',['COUNT','DOT','TEXT','RIBBON'],'COUNT','setBadgeType')) +
       ctrlGroup('数值', `<input type="number" min="0" max="200" value="5" id="bg-count" oninput="updateBadge()">`) +
       ctrlGroup('颜色', ctrlBtns('bg-c',['RED','BLUE','GREEN','ORANGE'],'RED','setBadgeColor')) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Badge {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Badge {
   attr {
     type(BadgeType.COUNT)
     count(<span class="num">5</span>)
@@ -797,7 +832,7 @@ function renderControls(comp) {
     max(<span class="num">99</span>)
   }
   content { /* wrapped view */ }
-}`)}</div></div>`;
+}`)) + `</div>`;
     document.getElementById('badge-el').innerHTML = renderBadge();
   }
   else if (comp === 'tag') {
@@ -807,8 +842,7 @@ function renderControls(comp) {
       ctrlGroup('颜色', ctrlBtns('tg-c',['PRIMARY','SUCCESS','WARNING','DANGER','PURPLE'],'PRIMARY','setTagColor')) +
       ctrlGroup('选项', `<label class="ctrl-toggle"><input type="checkbox" id="tg-close" onchange="renderTags()"> 可关闭</label>
         <label class="ctrl-toggle" style="margin-top:6px"><input type="checkbox" id="tg-check" onchange="renderTags()"> 可选中</label>`) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Tag {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Tag {
   attr {
     text(<span class="str">"标签"</span>)
     style(TagStyle.FILLED)
@@ -816,15 +850,14 @@ function renderControls(comp) {
     color(TagColor.PRIMARY)
     closable(<span class="num">true</span>)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderTags();
   }
   else if (comp === 'rate') {
     ctrl.innerHTML = ctrlHeader('Rate','评分') +
       ctrlGroup('形状', ctrlBtns('rt-s',['★ 星形','♥ 爱心','◆ 菱形','● 圆形'],'★ 星形','setRateShape')) +
       ctrlGroup('最大值', `<input type="range" min="3" max="10" value="5" id="rt-max" oninput="document.getElementById('rate-max-label').textContent=this.value;renderRateStars()">`) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Rate {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Rate {
   attr {
     value(<span class="num">3f</span>)
     count(<span class="num">5</span>)
@@ -832,29 +865,27 @@ function renderControls(comp) {
     shape(RateShape.STAR)
   }
   event { onChange { v -> /* ... */ } }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderRateStars();
   }
   else if (comp === 'noticebar') {
     ctrl.innerHTML = ctrlHeader('NoticeBar','通知栏') +
       ctrlGroup('内容', `<input type="text" id="nb-text" value="KuiklyLoadingView 已更新！" oninput="updateNoticeBar()">`) +
       ctrlGroup('滚动模式', ctrlBtns('nb-m',['SCROLL','MARQUEE','SINGLE'],'MARQUEE','setNoticeMode')) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`NoticeBar {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`NoticeBar {
   attr {
     text(<span class="str">"通知内容"</span>)
     scrollMode(NoticeBarScrollMode.MARQUEE)
     icon(NoticeBarIcon.NOTICE)
     closable(<span class="num">true</span>)
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
   }
   else if (comp === 'floatbutton') {
     ctrl.innerHTML = ctrlHeader('FloatButton','悬浮按钮') +
       ctrlGroup('颜色', ctrlBtns('fb-c',['PRIMARY','SUCCESS','WARNING','DANGER'],'PRIMARY','setFabColor')) +
       ctrlGroup('操作数', `<input type="range" min="1" max="4" value="4" oninput="updateFabCount(this.value)">`) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`FloatButton {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`FloatButton {
   attr {
     icon(<span class="str">"+"</span>)
     color(FloatButtonColor.PRIMARY)
@@ -865,7 +896,7 @@ function renderControls(comp) {
       FloatActionItem(<span class="str">"📁"</span>, <span class="str">"文件"</span>),
     )
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderFabActions();
   }
   else if (comp === 'collapse') {
@@ -876,15 +907,14 @@ function renderControls(comp) {
         <div class="ctrl-btn" onclick="expandAllCollapse()">全部展开</div>
         <div class="ctrl-btn" onclick="collapseAllCollapse()">全部收起</div>
       </div>
-      <hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Collapse(theme = CollapseTheme.DEFAULT) {
+      <hr class="ctrl-divider">` + codeBlock(dsl(`Collapse(theme = CollapseTheme.DEFAULT) {
   CollapsePanel {
     attr {
       title(<span class="str">"面板标题"</span>)
       content { /* body view */ }
     }
   }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderCollapse();
   }
   else if (comp === 'watermark') {
@@ -893,8 +923,7 @@ function renderControls(comp) {
       ctrlGroup('透明度', `<input type="range" min="0.02" max="0.25" step="0.01" value="0.1" id="wm-op" oninput="renderWatermark()">`) +
       ctrlGroup('旋转角度', `<input type="range" min="-60" max="0" value="-25" id="wm-angle" oninput="renderWatermark()">`) +
       ctrlGroup('字号', `<input type="range" min="10" max="22" value="14" id="wm-fs" oninput="renderWatermark()">`) +
-      `<hr class="ctrl-divider">
-      <div class="code-block">${dsl(`Watermark {
+      `<hr class="ctrl-divider">` + codeBlock(dsl(`Watermark {
   attr {
     text(<span class="str">"机密文件"</span>)
     color(Color(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.1f</span>))
@@ -903,7 +932,7 @@ function renderControls(comp) {
     grid(<span class="num">5</span>, <span class="num">6</span>)
   }
   content { /* content view */ }
-}`)}</div></div>`;
+}`)) + `</div>`;
     renderWatermark();
   }
 }
@@ -1365,6 +1394,23 @@ function renderWatermark(){
   ctx.restore();
 }
 
+// ─── Sidebar Search ───────────────────────────────────────────────────────────
+function filterSidebar(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+  document.querySelectorAll('.cat-label').forEach(label => {
+    let el = label.nextElementSibling;
+    let anyVisible = false;
+    while (el && !el.classList.contains('cat-label')) {
+      if (el.style.display !== 'none') anyVisible = true;
+      el = el.nextElementSibling;
+    }
+    label.style.display = anyVisible ? '' : 'none';
+  });
+}
+
 // ─── Initial render ───────────────────────────────────────────────────────────
 renderControls('loading');
 updateAlert();
@@ -1378,18 +1424,20 @@ function toggleTheme(){
   if(darkMode){
     document.body.style.background='#0f0d1a';
     document.getElementById('main').style.background='#0f0d1a';
-    document.querySelectorAll('#controls').forEach(el=>el.style.background='#1a1625');
-    document.querySelectorAll('#controls').forEach(el=>el.style.borderColor='#2d2047');
-    document.querySelectorAll('.ctrl-header').forEach(el=>el.style.borderColor='#2d2047');
+    document.querySelectorAll('#controls').forEach(el=>{el.style.background='rgba(22,22,35,0.98)';el.style.borderColor='rgba(255,255,255,.08)'});
+    document.querySelectorAll('.ctrl-header').forEach(el=>el.style.borderColor='rgba(255,255,255,.08)');
     document.querySelectorAll('.ctrl-header h2').forEach(el=>el.style.color='#e2d9f3');
+    document.querySelectorAll('.ctrl-group input[type=text],.ctrl-group select,.ctrl-group input[type=number]').forEach(el=>{el.style.background='#1a1625';el.style.borderColor='rgba(255,255,255,.12)';el.style.color='#e2d9f3'});
+    document.querySelectorAll('.ctrl-btn').forEach(el=>{el.style.background='#1a1625';el.style.borderColor='rgba(255,255,255,.12)';el.style.color='#c9d1d9'});
     btn.textContent='☀ Light';
   } else {
-    document.body.style.background='#f0edfb';
-    document.getElementById('main').style.background='#f0edfb';
-    document.querySelectorAll('#controls').forEach(el=>el.style.background='#fff');
-    document.querySelectorAll('#controls').forEach(el=>el.style.borderColor='#f0f0f0');
+    document.body.style.background='#f4f2fb';
+    document.getElementById('main').style.background='#f4f2fb';
+    document.querySelectorAll('#controls').forEach(el=>{el.style.background='rgba(255,255,255,.98)';el.style.borderColor='#e8ecf4'});
     document.querySelectorAll('.ctrl-header').forEach(el=>el.style.borderColor='#f0f0f0');
-    document.querySelectorAll('.ctrl-header h2').forEach(el=>el.style.color='#1a1a1a');
+    document.querySelectorAll('.ctrl-header h2').forEach(el=>el.style.color='#1a1a2e');
+    document.querySelectorAll('.ctrl-group input[type=text],.ctrl-group select,.ctrl-group input[type=number]').forEach(el=>{el.style.background='#fff';el.style.borderColor='#e2e8f0';el.style.color='#1a1a2e'});
+    document.querySelectorAll('.ctrl-btn').forEach(el=>{el.style.background='#fff';el.style.borderColor='#e2e8f0';el.style.color='#374151'});
     btn.textContent='☾ Dark';
   }
 }
