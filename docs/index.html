@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KuiklyLoadingView — Component Library</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1677ff;--green:#52c41a;--orange:#faad14;--red:#ff4d4f;--purple:#722ed1;
+  --sidebar-bg:#001529;--sidebar-text:#a6adb4;--sidebar-active:#1677ff;
+  --border:#f0f0f0;--card-shadow:0 2px 8px rgba(0,0,0,.1);
+  --phone-w:280px;--phone-h:580px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f6fa;display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+#sidebar{width:220px;background:var(--sidebar-bg);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
+#sidebar h1{color:#fff;font-size:14px;font-weight:700;padding:20px 16px 8px;letter-spacing:.5px}
+#sidebar .version{color:#4a5568;font-size:11px;padding:0 16px 16px}
+.cat-label{color:#5a6b7e;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;padding:12px 16px 4px}
+.nav-item{display:block;padding:8px 16px;color:var(--sidebar-text);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;user-select:none}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-item.active{color:#fff;background:rgba(22,119,255,.15);border-left-color:var(--blue)}
+
+/* ── Main area ── */
+#main{flex:1;display:flex;overflow:hidden}
+
+/* ── Center: phone frame ── */
+#center{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+.phone-wrap{position:relative}
+.phone{
+  width:var(--phone-w);height:var(--phone-h);
+  background:#fff;border-radius:36px;
+  box-shadow:0 0 0 8px #1a1a1a,0 0 0 10px #333,0 20px 60px rgba(0,0,0,.4);
+  overflow:hidden;position:relative;display:flex;flex-direction:column
+}
+.phone-notch{
+  height:32px;background:#1a1a1a;display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:6px;flex-shrink:0
+}
+.phone-notch-inner{width:90px;height:20px;background:#1a1a1a;border-radius:0 0 14px 14px}
+.phone-screen{flex:1;overflow:hidden;position:relative;background:#f5f5f5}
+
+/* ── Component demo areas ── */
+.demo{display:none;width:100%;height:100%;overflow-y:auto;flex-direction:column;align-items:center;padding:0}
+.demo.active{display:flex}
+
+/* ── Right: controls ── */
+#controls{width:300px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:0}
+.ctrl-header{padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.ctrl-header h2{font-size:16px;font-weight:700;color:#1a1a1a}
+.ctrl-header p{font-size:12px;color:#888;margin-top:3px}
+.ctrl-body{padding:16px 20px}
+.ctrl-group{margin-bottom:16px}
+.ctrl-group label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:6px}
+.ctrl-group input[type=range]{width:100%;accent-color:var(--blue)}
+.ctrl-group input[type=text],.ctrl-group select,.ctrl-group input[type=number]{
+  width:100%;padding:6px 10px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none
+}
+.ctrl-group input[type=text]:focus,.ctrl-group select:focus{border-color:var(--blue)}
+.ctrl-row{display:flex;gap:6px;flex-wrap:wrap}
+.ctrl-btn{
+  padding:5px 12px;border:1px solid #d9d9d9;border-radius:6px;font-size:12px;cursor:pointer;
+  background:#fff;transition:all .2s;color:#333
+}
+.ctrl-btn.active,.ctrl-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.ctrl-toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:#333;cursor:pointer}
+.ctrl-toggle input{accent-color:var(--blue)}
+.code-block{background:#1e1e3f;border-radius:8px;padding:12px 14px;font-family:'JetBrains Mono','Fira Code',monospace;font-size:10.5px;color:#cdd3de;line-height:1.6;overflow-x:auto;white-space:pre;margin-top:8px}
+.code-block .kw{color:#c792ea}.code-block .fn{color:#82aaff}.code-block .str{color:#c3e88d}.code-block .num{color:#f78c6c}
+.ctrl-divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+
+/* ── Global utilities ── */
+.spinner{
+  width:36px;height:36px;border:3px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite
+}
+.spinner-blue{border:3px solid rgba(22,119,255,.2);border-top-color:var(--blue)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes countup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes marquee{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+
+/* shared phone content styles */
+.phone-content{padding:12px;width:100%}
+.section-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<!-- ─── Sidebar ─── -->
+<nav id="sidebar">
+  <h1>KuiklyLoadingView</h1>
+  <div class="version">v1.0 · 20 Components</div>
+
+  <div class="cat-label">Overlay / Feedback</div>
+  <div class="nav-item active" data-comp="loading">Loading 加载框</div>
+  <div class="nav-item" data-comp="toast">Toast 轻提示</div>
+  <div class="nav-item" data-comp="spin">Spin 局部加载</div>
+  <div class="nav-item" data-comp="result">Result 结果页</div>
+  <div class="nav-item" data-comp="alert">Alert 警告条</div>
+
+  <div class="cat-label">Progress / Data</div>
+  <div class="nav-item" data-comp="progressbar">ProgressBar 进度条</div>
+  <div class="nav-item" data-comp="circularprogress">CircularProgress 环形</div>
+  <div class="nav-item" data-comp="stepprogress">StepProgress 步骤条</div>
+  <div class="nav-item" data-comp="loadmore">LoadMore 加载更多</div>
+  <div class="nav-item" data-comp="statistic">Statistic 数据统计</div>
+  <div class="nav-item" data-comp="countdown">CountDown 倒计时</div>
+
+  <div class="cat-label">Display</div>
+  <div class="nav-item" data-comp="skeleton">Skeleton 骨架屏</div>
+  <div class="nav-item" data-comp="timeline">Timeline 时间轴</div>
+  <div class="nav-item" data-comp="badge">Badge 徽标</div>
+  <div class="nav-item" data-comp="tag">Tag 标签</div>
+  <div class="nav-item" data-comp="rate">Rate 评分</div>
+  <div class="nav-item" data-comp="noticebar">NoticeBar 通知栏</div>
+
+  <div class="cat-label">Overlay / Navigation</div>
+  <div class="nav-item" data-comp="floatbutton">FloatButton 悬浮按钮</div>
+  <div class="nav-item" data-comp="collapse">Collapse 折叠面板</div>
+  <div class="nav-item" data-comp="watermark">Watermark 水印</div>
+</nav>
+
+<!-- ─── Main ─── -->
+<div id="main">
+
+  <!-- Phone Frame -->
+  <div id="center">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-inner"></div></div>
+        <div class="phone-screen" id="phoneScreen">
+
+          <!-- 1. LoadingView -->
+          <div class="demo active" id="demo-loading">
+            <div style="width:100%;height:100%;position:relative;background:#f5f5f5;display:flex;flex-direction:column">
+              <div style="padding:12px;flex:1;overflow-y:auto">
+                <div class="section-title">Content Area</div>
+                <div style="background:#fff;border-radius:8px;padding:12px;margin-bottom:8px">
+                  <div style="height:12px;background:#e8e8e8;border-radius:4px;margin-bottom:6px"></div>
+                  <div style="height:12px;background:#e8e8e8;border-radius:4px;width:70%"></div>
+                </div>
+                <div style="background:#fff;border-radius:8px;padding:12px;margin-bottom:8px">
+                  <div style="height:12px;background:#e8e8e8;border-radius:4px;margin-bottom:6px"></div>
+                  <div style="height:12px;background:#e8e8e8;border-radius:4px;width:85%"></div>
+                </div>
+              </div>
+              <!-- Overlay -->
+              <div id="loading-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.5);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:10">
+                <div class="spinner"></div>
+                <span id="loading-text" style="color:#fff;font-size:13px">加载中...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Toast -->
+          <div class="demo" id="demo-toast">
+            <div style="width:100%;height:100%;position:relative;background:#f5f5f5;padding:12px">
+              <div class="section-title">点击右侧按钮触发 Toast</div>
+              <div style="background:#fff;border-radius:8px;padding:12px;margin-bottom:8px">
+                <div style="height:10px;background:#e8e8e8;border-radius:3px;margin-bottom:6px"></div>
+                <div style="height:10px;background:#e8e8e8;border-radius:3px;width:60%"></div>
+              </div>
+              <!-- Toast overlay -->
+              <div id="toast-el" style="display:none;position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;z-index:20">
+                <div style="background:rgba(30,30,30,.88);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;text-align:center;min-width:90px;display:flex;flex-direction:column;align-items:center;gap:6px">
+                  <span id="toast-icon-el" style="font-size:22px"></span>
+                  <span id="toast-msg-el">操作成功</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Spin -->
+          <div class="demo" id="demo-spin">
+            <div style="padding:12px;width:100%">
+              <div class="section-title">局部加载遮罩</div>
+              <div id="spin-card" style="background:#fff;border-radius:10px;padding:16px;position:relative;min-height:160px">
+                <div style="font-size:13px;font-weight:600;color:#333;margin-bottom:8px">用户数据卡片</div>
+                <div style="height:10px;background:#f0f0f0;border-radius:3px;margin-bottom:6px"></div>
+                <div style="height:10px;background:#f0f0f0;border-radius:3px;width:70%;margin-bottom:6px"></div>
+                <div style="height:10px;background:#f0f0f0;border-radius:3px;width:50%"></div>
+                <!-- Spin overlay -->
+                <div id="spin-overlay" style="display:none;position:absolute;inset:0;background:rgba(255,255,255,.85);border-radius:10px;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+                  <div class="spinner spinner-blue" style="width:28px;height:28px"></div>
+                  <span id="spin-tip" style="font-size:11px;color:var(--blue)">加载中...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. ResultView -->
+          <div class="demo" id="demo-result">
+            <div id="result-content" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;background:#fff">
+              <div id="result-icon" style="font-size:52px;margin-bottom:12px">✅</div>
+              <div id="result-title" style="font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:6px">操作成功</div>
+              <div id="result-subtitle" style="font-size:12px;color:#888;margin-bottom:20px;line-height:1.5">您的操作已成功完成，数据已保存</div>
+              <button style="background:var(--blue);color:#fff;border:none;padding:9px 24px;border-radius:20px;font-size:13px;cursor:pointer">返回首页</button>
+            </div>
+          </div>
+
+          <!-- 5. Alert -->
+          <div class="demo" id="demo-alert">
+            <div style="padding:12px;width:100%;display:flex;flex-direction:column;gap:8px">
+              <div class="section-title">内嵌警告条</div>
+              <div id="alert-el" style="border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:8px;font-size:12px;animation:fadeIn .3s ease">
+                <span id="alert-icon" style="font-size:15px;flex-shrink:0;margin-top:1px">ℹ️</span>
+                <div style="flex:1">
+                  <div id="alert-title" style="font-weight:600;color:#1a1a1a;margin-bottom:2px">提示信息</div>
+                  <div id="alert-desc" style="color:#666;line-height:1.4">这是一条提示消息，用于向用户展示重要信息。</div>
+                </div>
+                <span id="alert-close" style="cursor:pointer;color:#999;flex-shrink:0">✕</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. ProgressBar -->
+          <div class="demo" id="demo-progressbar">
+            <div style="padding:14px;width:100%;display:flex;flex-direction:column;gap:14px">
+              <div class="section-title">进度条</div>
+              <!-- progress bar -->
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:4px">
+                  <span>进度</span><span id="pb-pct-label">60%</span>
+                </div>
+                <div id="pb-track" style="height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden">
+                  <div id="pb-fill" style="height:100%;width:60%;background:linear-gradient(90deg,#1677ff,#40a9ff);border-radius:6px;transition:width .4s ease"></div>
+                </div>
+              </div>
+              <!-- striped -->
+              <div>
+                <div style="font-size:11px;color:#888;margin-bottom:4px">条纹样式</div>
+                <div style="height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden">
+                  <div id="pb-striped" style="height:100%;width:75%;background:repeating-linear-gradient(45deg,#1677ff 0,#1677ff 10px,#40a9ff 10px,#40a9ff 20px);border-radius:6px"></div>
+                </div>
+              </div>
+              <!-- success -->
+              <div>
+                <div style="font-size:11px;color:#888;margin-bottom:4px">成功状态</div>
+                <div style="height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden">
+                  <div style="height:100%;width:100%;background:linear-gradient(90deg,#52c41a,#73d13d);border-radius:6px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. CircularProgress -->
+          <div class="demo" id="demo-circularprogress">
+            <div style="padding:14px;width:100%;display:flex;flex-direction:column;align-items:center;gap:16px">
+              <div class="section-title" style="align-self:flex-start">环形进度</div>
+              <canvas id="circ-canvas" width="160" height="160"></canvas>
+              <div style="display:flex;gap:16px">
+                <div style="text-align:center">
+                  <canvas id="circ2" width="70" height="70"></canvas>
+                  <div style="font-size:10px;color:#888;margin-top:4px">渐变</div>
+                </div>
+                <div style="text-align:center">
+                  <canvas id="circ3" width="70" height="70"></canvas>
+                  <div style="font-size:10px;color:#888;margin-top:4px">虚线</div>
+                </div>
+                <div style="text-align:center">
+                  <canvas id="circ4" width="70" height="70"></canvas>
+                  <div style="font-size:10px;color:#888;margin-top:4px">成功</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. StepProgress -->
+          <div class="demo" id="demo-stepprogress">
+            <div style="padding:12px;width:100%">
+              <div class="section-title">步骤条</div>
+              <div id="step-container"></div>
+            </div>
+          </div>
+
+          <!-- 9. LoadMore -->
+          <div class="demo" id="demo-loadmore">
+            <div style="width:100%;height:100%;overflow-y:auto">
+              <div id="loadmore-list" style="padding:8px"></div>
+              <div id="loadmore-footer" style="height:48px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#888;cursor:pointer"></div>
+            </div>
+          </div>
+
+          <!-- 10. Statistic -->
+          <div class="demo" id="demo-statistic">
+            <div style="padding:12px;width:100%">
+              <div class="section-title">数据统计</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div class="stat-card" data-val="128450" data-prefix="¥" data-suffix="" data-label="总收入" data-color="#1677ff"></div>
+                <div class="stat-card" data-val="9821" data-prefix="" data-suffix="人" data-label="用户数" data-color="#52c41a"></div>
+                <div class="stat-card" data-val="98.6" data-prefix="" data-suffix="%" data-label="满意度" data-color="#faad14"></div>
+                <div class="stat-card" data-val="3264" data-prefix="" data-suffix="单" data-label="今日订单" data-color="#722ed1"></div>
+              </div>
+              <button id="stat-replay" style="margin-top:12px;width:100%;padding:8px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">▶ 重新播放动画</button>
+            </div>
+          </div>
+
+          <!-- 11. CountDown -->
+          <div class="demo" id="demo-countdown">
+            <div style="padding:12px;width:100%;display:flex;flex-direction:column;align-items:center;gap:16px">
+              <div class="section-title" style="align-self:flex-start">倒计时</div>
+              <!-- TEXT style -->
+              <div style="background:#fff;border-radius:10px;padding:14px;width:100%;text-align:center">
+                <div style="font-size:10px;color:#888;margin-bottom:6px">TEXT 样式</div>
+                <div id="cd-text" style="font-size:22px;font-weight:700;color:#1a1a1a;font-variant-numeric:tabular-nums"></div>
+              </div>
+              <!-- COLON style -->
+              <div style="background:#fff;border-radius:10px;padding:14px;width:100%;text-align:center">
+                <div style="font-size:10px;color:#888;margin-bottom:6px">COLON 分隔符样式</div>
+                <div id="cd-colon" style="display:flex;align-items:center;justify-content:center;gap:4px"></div>
+              </div>
+              <!-- BLOCK style -->
+              <div style="background:#fff;border-radius:10px;padding:14px;width:100%;text-align:center">
+                <div style="font-size:10px;color:#888;margin-bottom:6px">BLOCK 方块样式</div>
+                <div id="cd-block" style="display:flex;align-items:center;justify-content:center;gap:4px"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 12. Skeleton -->
+          <div class="demo" id="demo-skeleton">
+            <div style="padding:12px;width:100%">
+              <div class="section-title">骨架屏</div>
+              <div id="skeleton-container"></div>
+            </div>
+          </div>
+
+          <!-- 13. Timeline -->
+          <div class="demo" id="demo-timeline">
+            <div style="padding:12px;width:100%;overflow-y:auto">
+              <div class="section-title">时间轴</div>
+              <div id="timeline-container"></div>
+            </div>
+          </div>
+
+          <!-- 14. Badge -->
+          <div class="demo" id="demo-badge">
+            <div style="padding:14px;width:100%">
+              <div class="section-title">徽标数</div>
+              <div style="display:flex;gap:24px;flex-wrap:wrap;padding:16px 0;justify-content:center">
+                <div style="position:relative;display:inline-block">
+                  <div style="width:44px;height:44px;background:#e6f4ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">🔔</div>
+                  <div id="badge-el" style="position:absolute;top:-6px;right:-6px"></div>
+                </div>
+                <div style="position:relative;display:inline-block">
+                  <div style="width:44px;height:44px;background:#f6ffed;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">💬</div>
+                  <div style="position:absolute;top:-4px;right:-4px;width:10px;height:10px;background:#ff4d4f;border-radius:50%;border:2px solid #fff"></div>
+                </div>
+                <div style="position:relative;display:inline-block">
+                  <div style="width:44px;height:44px;background:#fff7e6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>
+                  <div style="position:absolute;top:-8px;right:-12px;background:#1677ff;color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;white-space:nowrap;border:1.5px solid #fff">NEW</div>
+                </div>
+                <div style="position:relative;display:inline-block;overflow:hidden">
+                  <div style="width:80px;height:80px;background:#fff;border-radius:10px;border:1px solid #f0f0f0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#888">卡片</div>
+                  <div style="position:absolute;top:8px;right:-20px;background:#ff4d4f;color:#fff;font-size:10px;padding:2px 24px;transform:rotate(45deg);white-space:nowrap">HOT</div>
+                </div>
+              </div>
+              <div style="margin-top:8px;text-align:center">
+                <div style="font-size:10px;color:#888;margin-bottom:8px">动态调整</div>
+                <div id="badge-dynamic" style="position:relative;display:inline-block">
+                  <div style="width:52px;height:52px;background:var(--blue);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px">🛒</div>
+                  <div id="badge-count-el" style="position:absolute;top:-8px;right:-8px;background:#ff4d4f;color:#fff;font-size:10px;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff;font-weight:700">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 15. Tag -->
+          <div class="demo" id="demo-tag">
+            <div style="padding:12px;width:100%">
+              <div class="section-title">标签</div>
+              <div id="tag-container"></div>
+            </div>
+          </div>
+
+          <!-- 16. Rate -->
+          <div class="demo" id="demo-rate">
+            <div style="padding:12px;width:100%;display:flex;flex-direction:column;gap:12px">
+              <div class="section-title">评分</div>
+              <div style="background:#fff;border-radius:10px;padding:12px">
+                <div style="font-size:11px;color:#888;margin-bottom:8px">交互评分</div>
+                <div id="rate-stars" style="display:flex;gap:4px;cursor:pointer"></div>
+                <div style="font-size:11px;color:#888;margin-top:6px">当前评分: <span id="rate-val-label">3</span> / <span id="rate-max-label">5</span></div>
+              </div>
+              <div style="background:#fff;border-radius:10px;padding:12px">
+                <div style="font-size:11px;color:#888;margin-bottom:6px">只读 · 爱心形状</div>
+                <div style="display:flex;gap:4px">
+                  <span style="color:#ff4d4f;font-size:22px">♥</span>
+                  <span style="color:#ff4d4f;font-size:22px">♥</span>
+                  <span style="color:#ff4d4f;font-size:22px">♥</span>
+                  <span style="color:#ff4d4f;font-size:22px">♥</span>
+                  <span style="color:#e8e8e8;font-size:22px">♥</span>
+                </div>
+              </div>
+              <div style="background:#fff;border-radius:10px;padding:12px">
+                <div style="font-size:11px;color:#888;margin-bottom:6px">半星支持</div>
+                <div style="display:flex;gap:4px">
+                  <span style="color:#faad14;font-size:22px">★</span>
+                  <span style="color:#faad14;font-size:22px">★</span>
+                  <span style="color:#faad14;font-size:22px">★</span>
+                  <span style="font-size:22px;background:linear-gradient(90deg,#faad14 50%,#e8e8e8 50%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">★</span>
+                  <span style="color:#e8e8e8;font-size:22px">★</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 17. NoticeBar -->
+          <div class="demo" id="demo-noticebar">
+            <div style="padding:12px;width:100%;display:flex;flex-direction:column;gap:10px">
+              <div class="section-title">通知栏</div>
+              <div id="noticebar-el" style="background:#fffbe6;border:1px solid #ffe58f;border-radius:6px;padding:9px 12px;display:flex;align-items:center;gap:8px;overflow:hidden">
+                <span style="font-size:14px;flex-shrink:0">📢</span>
+                <div style="flex:1;overflow:hidden">
+                  <div id="noticebar-text" style="font-size:12px;color:#d48806;white-space:nowrap;animation:marquee 8s linear infinite">系统通知：KuiklyLoadingView 组件库已更新至最新版本，新增 20 个高质量组件，欢迎体验！</div>
+                </div>
+                <span id="noticebar-close" style="cursor:pointer;color:#d48806;flex-shrink:0;font-size:12px">✕</span>
+              </div>
+              <div style="background:#e6f4ff;border:1px solid #91caff;border-radius:6px;padding:9px 12px;display:flex;align-items:center;gap:8px">
+                <span style="font-size:14px">ℹ️</span>
+                <div style="flex:1;font-size:12px;color:#1677ff">单行静态通知消息示例</div>
+              </div>
+              <div style="background:#f6ffed;border:1px solid #b7eb8f;border-radius:6px;padding:9px 12px;display:flex;align-items:center;gap:8px">
+                <span style="font-size:14px">✅</span>
+                <div style="flex:1;font-size:12px;color:#389e0d">数据已同步成功</div>
+                <span style="background:#52c41a;color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;cursor:pointer">查看</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 18. FloatButton -->
+          <div class="demo" id="demo-floatbutton">
+            <div style="width:100%;height:100%;position:relative;background:#f5f5f5;padding:12px">
+              <div class="section-title">悬浮按钮</div>
+              <div style="background:#fff;border-radius:8px;padding:12px">
+                <div style="height:10px;background:#e8e8e8;border-radius:3px;margin-bottom:6px"></div>
+                <div style="height:10px;background:#e8e8e8;border-radius:3px;width:60%"></div>
+              </div>
+              <!-- FAB -->
+              <div id="fab-wrap" style="position:absolute;bottom:16px;right:16px;display:flex;flex-direction:column;align-items:center;gap:8px">
+                <div id="fab-actions" style="display:flex;flex-direction:column;align-items:center;gap:8px"></div>
+                <div id="fab-btn" style="width:48px;height:48px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(22,119,255,.4);font-size:22px;color:#fff;transition:transform .3s;user-select:none">+</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 19. Collapse -->
+          <div class="demo" id="demo-collapse">
+            <div style="padding:12px;width:100%">
+              <div class="section-title">折叠面板</div>
+              <div id="collapse-container"></div>
+            </div>
+          </div>
+
+          <!-- 20. Watermark -->
+          <div class="demo" id="demo-watermark">
+            <div style="width:100%;height:100%;position:relative;overflow:hidden">
+              <div style="padding:16px;position:relative;z-index:1">
+                <div style="background:#fff;border-radius:8px;padding:14px">
+                  <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:6px">2026 Q2 财务报告</div>
+                  <div style="font-size:12px;color:#666;margin-bottom:4px">净利润同比增长 23.5%</div>
+                  <div style="font-size:12px;color:#666;margin-bottom:4px">总营收 ¥12,450,000</div>
+                  <div style="font-size:12px;color:#666">活跃用户 98,200 人</div>
+                </div>
+              </div>
+              <!-- Watermark canvas -->
+              <canvas id="wm-canvas" style="position:absolute;inset:0;pointer-events:none;z-index:2"></canvas>
+            </div>
+          </div>
+
+        </div><!-- /phone-screen -->
+      </div><!-- /phone -->
+    </div>
+  </div><!-- /center -->
+
+  <!-- ─── Controls Panel ─── -->
+  <div id="controls">
+    <!-- Controls injected by JS per component -->
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ─── Navigation ───────────────────────────────────────────────────────────────
+const navItems = document.querySelectorAll('.nav-item');
+const demos = document.querySelectorAll('.demo');
+let currentComp = 'loading';
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    navItems.forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    const comp = item.dataset.comp;
+    currentComp = comp;
+    demos.forEach(d => d.classList.remove('active'));
+    document.getElementById('demo-' + comp).classList.add('active');
+    renderControls(comp);
+    if (comp === 'skeleton') renderSkeleton();
+    if (comp === 'circularprogress') { setTimeout(drawAllCircular, 50); }
+    if (comp === 'stepprogress') renderSteps();
+    if (comp === 'loadmore') renderLoadMore();
+    if (comp === 'statistic') renderStatistic(true);
+    if (comp === 'countdown') startCountdown();
+    if (comp === 'timeline') renderTimeline();
+    if (comp === 'tag') renderTags();
+    if (comp === 'rate') renderRateStars();
+    if (comp === 'floatbutton') renderFabActions();
+    if (comp === 'collapse') renderCollapse();
+    if (comp === 'watermark') renderWatermark();
+    if (comp === 'badge') { document.getElementById('badge-el').innerHTML = renderBadge(); }
+  });
+});
+
+// ─── Controls Renderer ────────────────────────────────────────────────────────
+const ctrl = document.getElementById('controls');
+
+function ctrlHeader(title, desc, pkg) {
+  return `<div class="ctrl-header"><h2>${title}</h2><p>${desc}</p></div><div class="ctrl-body">`;
+}
+function ctrlGroup(label, content) {
+  return `<div class="ctrl-group"><label>${label}</label>${content}</div>`;
+}
+function ctrlBtns(id, options, active, onclick) {
+  return `<div class="ctrl-row">${options.map(o=>`<div class="ctrl-btn ${o===active?'active':''}" onclick="${onclick}('${o}',this)">${o}</div>`).join('')}</div>`;
+}
+
+const dslColors = {kw:'#c792ea',fn:'#82aaff',str:'#c3e88d',num:'#f78c6c'};
+function dsl(s){return s.replace(/\b(fun|val|var|if|when|true|false|null|data|class|internal|override)\b/g,`<span class="kw">$1</span>`).replace(/\b([A-Z][a-z]+(?:[A-Z][a-z]*)*)\s*\{/g,`<span class="fn">$1</span> {`)}
+
+// ─── Loading Controls ─────────────────────────────────────────────────────────
+let loadingState = {show:false, text:'加载中...', opacity:0.5};
+function renderControls(comp) {
+  if (comp === 'loading') {
+    ctrl.innerHTML = ctrlHeader('Loading','全屏/局部加载遮罩') +
+      ctrlGroup('显示状态', `<label class="ctrl-toggle"><input type="checkbox" id="ld-show" onchange="toggleLoading(this.checked)"> 显示遮罩</label>`) +
+      ctrlGroup('提示文字', `<input type="text" id="ld-txt" value="加载中..." oninput="updateLoadingText(this.value)">`) +
+      ctrlGroup('遮罩透明度', `<input type="range" min="0.2" max="0.9" step="0.05" value="0.5" id="ld-opacity" oninput="updateLoadingOpacity(this.value)">`) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Loading {
+  attr {
+    visible(<span class="num">true</span>)
+    fullScreen(<span class="num">true</span>)
+    loadingText(<span class="str">"加载中..."</span>)
+    maskColor(Color(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.5f</span>))
+  }
+}`)}</div></div>`;
+  }
+  else if (comp === 'toast') {
+    ctrl.innerHTML = ctrlHeader('Toast','轻提示浮层') +
+      ctrlGroup('图标类型', ctrlBtns('t-icon',['无','成功','错误','警告'],'无','setToastIcon')) +
+      ctrlGroup('弹出位置', ctrlBtns('t-pos',['顶部','中间','底部'],'中间','setToastPos')) +
+      ctrlGroup('提示内容', `<input type="text" id="t-msg" value="操作成功">`) +
+      `<div class="ctrl-group"><button class="ctrl-btn active" style="width:100%" onclick="showToast()">▶ 显示 Toast</button></div>
+      <hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Toast {
+  attr {
+    visible(<span class="num">true</span>)
+    message(<span class="str">"操作成功"</span>)
+    icon(ToastIcon.SUCCESS)
+    position(ToastPosition.CENTER)
+    durationMs(<span class="num">2000</span>)
+  }
+}`)}</div></div>`;
+  }
+  else if (comp === 'spin') {
+    ctrl.innerHTML = ctrlHeader('Spin','局部容器加载') +
+      ctrlGroup('显示状态', `<label class="ctrl-toggle"><input type="checkbox" id="sp-show" onchange="toggleSpin(this.checked)"> 显示加载</label>`) +
+      ctrlGroup('提示文字', `<input type="text" id="sp-tip" value="加载中..." oninput="updateSpinTip(this.value)">`) +
+      ctrlGroup('尺寸', ctrlBtns('sp-sz',['小','中','大'],'中','setSpinSize')) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Spin {
+  attr {
+    visible(<span class="num">true</span>)
+    tip(<span class="str">"加载中..."</span>)
+    size(SpinSize.DEFAULT)
+  }
+  content { /* ... */ }
+}`)}</div></div>`;
+  }
+  else if (comp === 'result') {
+    ctrl.innerHTML = ctrlHeader('Result','结果页面') +
+      ctrlGroup('结果类型', `<select onchange="setResultType(this.value)">
+        <option>SUCCESS</option><option>ERROR</option><option>WARNING</option>
+        <option>EMPTY</option><option>NETWORK_ERROR</option>
+        <option>FORBIDDEN</option><option>NOT_FOUND</option><option>CUSTOM</option>
+      </select>`) +
+      ctrlGroup('标题', `<input type="text" id="res-title" value="操作成功" oninput="updateResult()">`) +
+      ctrlGroup('副标题', `<input type="text" id="res-sub" value="您的操作已成功完成" oninput="updateResult()">`) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`ResultView {
+  attr {
+    type(ResultType.SUCCESS)
+    title(<span class="str">"操作成功"</span>)
+    subtitle(<span class="str">"数据已保存"</span>)
+  }
+}`)}</div></div>`;
+  }
+  else if (comp === 'alert') {
+    ctrl.innerHTML = ctrlHeader('Alert','内嵌警告条') +
+      ctrlGroup('类型', ctrlBtns('al-t',['SUCCESS','WARNING','ERROR','INFO'],'INFO','setAlertType')) +
+      ctrlGroup('标题', `<input type="text" id="al-title" value="提示信息" oninput="updateAlert()">`) +
+      ctrlGroup('描述', `<input type="text" id="al-desc" value="这是一条提示消息。" oninput="updateAlert()">`) +
+      ctrlGroup('选项', `<label class="ctrl-toggle"><input type="checkbox" id="al-icon" checked onchange="updateAlert()"> 显示图标</label>
+        <label class="ctrl-toggle" style="margin-top:6px"><input type="checkbox" id="al-close" checked onchange="updateAlert()"> 可关闭</label>`) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Alert {
+  attr {
+    type(AlertType.INFO)
+    title(<span class="str">"提示信息"</span>)
+    description(<span class="str">"消息内容"</span>)
+    closable(<span class="num">true</span>)
+  }
+}`)}</div></div>`;
+    updateAlert();
+  }
+  else if (comp === 'progressbar') {
+    ctrl.innerHTML = ctrlHeader('ProgressBar','线形进度条') +
+      ctrlGroup('进度值', `<input type="range" min="0" max="100" value="60" oninput="updatePB(this.value)">`) +
+      ctrlGroup('颜色', ctrlBtns('pb-c',['蓝色','绿色','橙色','红色'],'蓝色','setPBColor')) +
+      ctrlGroup('形状', ctrlBtns('pb-s',['ROUNDED','SQUARE'],'ROUNDED','setPBShape')) +
+      `<div class="ctrl-group"><button class="ctrl-btn active" style="width:100%" onclick="animatePB()">▶ 动画演示</button></div>
+      <hr class="ctrl-divider">
+      <div class="code-block">${dsl(`ProgressBar {
+  attr {
+    progress(<span class="num">0.6f</span>)
+    shape(ProgressBarShape.ROUNDED)
+    gradientColors(
+      Color(<span class="num">0xFF1677FFL</span>),
+      Color(<span class="num">0xFF40A9FFL</span>)
+    )
+  }
+}`)}</div></div>`;
+  }
+  else if (comp === 'circularprogress') {
+    ctrl.innerHTML = ctrlHeader('CircularProgress','环形进度') +
+      ctrlGroup('进度值', `<input type="range" min="0" max="100" value="65" oninput="updateCircular(this.value)">`) +
+      ctrlGroup('样式', ctrlBtns('cp-s',['SOLID','GRADIENT','DASHED'],'SOLID','setCircStyle')) +
+      ctrlGroup('描边宽度', `<input type="range" min="4" max="18" value="10" oninput="updateCircStroke(this.value)">`) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`CircularProgress {
+  attr {
+    progress(<span class="num">0.65f</span>)
+    style(CircularProgressStyle.SOLID)
+    strokeWidth(<span class="num">10f</span>)
+    size(<span class="num">120f</span>)
+  }
+}`)}</div></div>`;
+    setTimeout(drawAllCircular, 50);
+  }
+  else if (comp === 'stepprogress') {
+    ctrl.innerHTML = ctrlHeader('StepProgress','步骤条') +
+      ctrlGroup('步骤数', `<input type="range" min="2" max="5" value="4" oninput="updateStepCount(this.value)">`) +
+      ctrlGroup('当前步骤', `<input type="range" min="1" max="4" value="2" id="step-cur" oninput="updateStepCur(this.value)">`) +
+      ctrlGroup('样式', ctrlBtns('st-s',['HORIZONTAL','VERTICAL','DOT','NAVIGATION'],'HORIZONTAL','setStepStyle')) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`StepProgress {
+  attr {
+    steps(listOf(
+      StepItem(<span class="str">"填写"</span>,StepStatus.COMPLETED),
+      StepItem(<span class="str">"确认"</span>,StepStatus.ACTIVE),
+      StepItem(<span class="str">"支付"</span>,StepStatus.PENDING),
+    ))
+    direction(StepDirection.HORIZONTAL)
+  }
+}`)}</div></div>`;
+    renderSteps();
+  }
+  else if (comp === 'loadmore') {
+    ctrl.innerHTML = ctrlHeader('LoadMore','加载更多') +
+      ctrlGroup('状态', ctrlBtns('lm-s',['IDLE','LOADING','SUCCESS','NO_MORE','ERROR'],'IDLE','setLoadMoreState')) +
+      `<div class="ctrl-group"><button class="ctrl-btn active" style="width:100%" onclick="triggerLoadMore()">▶ 模拟加载</button></div>
+      <hr class="ctrl-divider">
+      <div class="code-block">${dsl(`LoadMore {
+  attr {
+    state(LoadMoreState.IDLE)
+    style(LoadMoreStyle.DEFAULT)
+  }
+  event {
+    onLoadMore { /* fetch next page */ }
+  }
+}`)}</div></div>`;
+    renderLoadMore();
+  }
+  else if (comp === 'statistic') {
+    ctrl.innerHTML = ctrlHeader('Statistic','数字统计') +
+      `<div class="ctrl-group"><button class="ctrl-btn active" style="width:100%" onclick="renderStatistic(true)">▶ 重新播放动画</button></div>
+      <hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Statistic {
+  attr {
+    title(<span class="str">"总收入"</span>)
+    value(<span class="num">128450.0</span>)
+    prefix(<span class="str">"¥"</span>)
+    precision(<span class="num">2</span>)
+    countUpDuration(<span class="num">800</span>)
+  }
+}`)}</div></div>`;
+    renderStatistic(true);
+  }
+  else if (comp === 'countdown') {
+    ctrl.innerHTML = ctrlHeader('CountDown','倒计时') +
+      ctrlGroup('时长', ctrlBtns('cd-d',['30秒','5分钟','1小时'],'30秒','setCountdownDuration')) +
+      `<div class="ctrl-row" style="margin-bottom:12px">
+        <div class="ctrl-btn active" onclick="startCountdown()">▶ 开始</div>
+        <div class="ctrl-btn" onclick="pauseCountdown()">⏸ 暂停</div>
+        <div class="ctrl-btn" onclick="resetCountdown()">↺ 重置</div>
+      </div>
+      <hr class="ctrl-divider">
+      <div class="code-block">${dsl(`CountDown {
+  attr {
+    totalMs(<span class="num">30000</span>)
+    style(CountDownStyle.COLON)
+    format(CountDownFormat.HH_MM_SS)
+  }
+  event { onFinish { /* done */ } }
+}`)}</div></div>`;
+    startCountdown();
+  }
+  else if (comp === 'skeleton') {
+    ctrl.innerHTML = ctrlHeader('Skeleton','骨架屏') +
+      ctrlGroup('动画类型', ctrlBtns('sk-a',['shimmer','pulse','none'],'shimmer','setSkAnim')) +
+      ctrlGroup('预设', ctrlBtns('sk-p',['文章','用户卡','列表'],'文章','setSkPreset')) +
+      ctrlGroup('主题', ctrlBtns('sk-t',['LIGHT','DARK','BLUE'],'LIGHT','setSkTheme')) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Skeleton {
+  attr {
+    preset(SkeletonPreset.ARTICLE)
+    animation(SkeletonAnimation.SHIMMER)
+    theme(SkeletonTheme.LIGHT)
+    loading(<span class="num">true</span>)
+  }
+}`)}</div></div>`;
+    renderSkeleton();
+  }
+  else if (comp === 'timeline') {
+    ctrl.innerHTML = ctrlHeader('Timeline','时间轴') +
+      ctrlGroup('模式', ctrlBtns('tl-m',['LEFT','RIGHT','ALTERNATE'],'LEFT','setTimelineMode')) +
+      ctrlGroup('主题', ctrlBtns('tl-t',['DEFAULT','PRIMARY','SUCCESS'],'DEFAULT','setTimelineTheme')) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Timeline {
+  attr {
+    mode(TimelineMode.LEFT)
+    theme(TimelineTheme.DEFAULT)
+    items(listOf(
+      TimelineItem(<span class="str">"已下单"</span>,TimelineItemStatus.COMPLETED),
+      TimelineItem(<span class="str">"配送中"</span>,TimelineItemStatus.ACTIVE),
+      TimelineItem(<span class="str">"待收货"</span>,TimelineItemStatus.PENDING),
+    ))
+  }
+}`)}</div></div>`;
+    renderTimeline();
+  }
+  else if (comp === 'badge') {
+    ctrl.innerHTML = ctrlHeader('Badge','徽标') +
+      ctrlGroup('类型', ctrlBtns('bg-t',['COUNT','DOT','TEXT','RIBBON'],'COUNT','setBadgeType')) +
+      ctrlGroup('数值', `<input type="number" min="0" max="200" value="5" id="bg-count" oninput="updateBadge()">`) +
+      ctrlGroup('颜色', ctrlBtns('bg-c',['RED','BLUE','GREEN','ORANGE'],'RED','setBadgeColor')) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Badge {
+  attr {
+    type(BadgeType.COUNT)
+    count(<span class="num">5</span>)
+    color(BadgeColor.RED)
+    max(<span class="num">99</span>)
+  }
+  content { /* wrapped view */ }
+}`)}</div></div>`;
+    document.getElementById('badge-el').innerHTML = renderBadge();
+  }
+  else if (comp === 'tag') {
+    ctrl.innerHTML = ctrlHeader('Tag','标签') +
+      ctrlGroup('样式', ctrlBtns('tg-s',['FILLED','OUTLINE','GHOST','PLAIN'],'FILLED','setTagStyle')) +
+      ctrlGroup('形状', ctrlBtns('tg-sh',['ROUNDED','PILL','SQUARE'],'ROUNDED','setTagShape')) +
+      ctrlGroup('颜色', ctrlBtns('tg-c',['PRIMARY','SUCCESS','WARNING','DANGER','PURPLE'],'PRIMARY','setTagColor')) +
+      ctrlGroup('选项', `<label class="ctrl-toggle"><input type="checkbox" id="tg-close" onchange="renderTags()"> 可关闭</label>
+        <label class="ctrl-toggle" style="margin-top:6px"><input type="checkbox" id="tg-check" onchange="renderTags()"> 可选中</label>`) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Tag {
+  attr {
+    text(<span class="str">"标签"</span>)
+    style(TagStyle.FILLED)
+    shape(TagShape.ROUNDED)
+    color(TagColor.PRIMARY)
+    closable(<span class="num">true</span>)
+  }
+}`)}</div></div>`;
+    renderTags();
+  }
+  else if (comp === 'rate') {
+    ctrl.innerHTML = ctrlHeader('Rate','评分') +
+      ctrlGroup('形状', ctrlBtns('rt-s',['★ 星形','♥ 爱心','◆ 菱形','● 圆形'],'★ 星形','setRateShape')) +
+      ctrlGroup('最大值', `<input type="range" min="3" max="10" value="5" id="rt-max" oninput="document.getElementById('rate-max-label').textContent=this.value;renderRateStars()">`) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Rate {
+  attr {
+    value(<span class="num">3f</span>)
+    count(<span class="num">5</span>)
+    allowHalf(<span class="num">true</span>)
+    shape(RateShape.STAR)
+  }
+  event { onChange { v -> /* ... */ } }
+}`)}</div></div>`;
+    renderRateStars();
+  }
+  else if (comp === 'noticebar') {
+    ctrl.innerHTML = ctrlHeader('NoticeBar','通知栏') +
+      ctrlGroup('内容', `<input type="text" id="nb-text" value="KuiklyLoadingView 已更新！" oninput="updateNoticeBar()">`) +
+      ctrlGroup('滚动模式', ctrlBtns('nb-m',['SCROLL','MARQUEE','SINGLE'],'MARQUEE','setNoticeMode')) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`NoticeBar {
+  attr {
+    text(<span class="str">"通知内容"</span>)
+    scrollMode(NoticeBarScrollMode.MARQUEE)
+    icon(NoticeBarIcon.NOTICE)
+    closable(<span class="num">true</span>)
+  }
+}`)}</div></div>`;
+  }
+  else if (comp === 'floatbutton') {
+    ctrl.innerHTML = ctrlHeader('FloatButton','悬浮按钮') +
+      ctrlGroup('颜色', ctrlBtns('fb-c',['PRIMARY','SUCCESS','WARNING','DANGER'],'PRIMARY','setFabColor')) +
+      ctrlGroup('操作数', `<input type="range" min="1" max="4" value="4" oninput="updateFabCount(this.value)">`) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`FloatButton {
+  attr {
+    icon(<span class="str">"+"</span>)
+    color(FloatButtonColor.PRIMARY)
+    bottom(<span class="num">32f</span>)
+    right(<span class="num">24f</span>)
+    actions(
+      FloatActionItem(<span class="str">"📷"</span>, <span class="str">"拍照"</span>),
+      FloatActionItem(<span class="str">"📁"</span>, <span class="str">"文件"</span>),
+    )
+  }
+}`)}</div></div>`;
+    renderFabActions();
+  }
+  else if (comp === 'collapse') {
+    ctrl.innerHTML = ctrlHeader('Collapse','折叠面板') +
+      ctrlGroup('主题', ctrlBtns('cp-t',['DEFAULT','BORDERLESS','CARD'],'DEFAULT','setCollapseTheme')) +
+      ctrlGroup('面板数', `<input type="range" min="2" max="5" value="3" oninput="updateCollapseCount(this.value)">`) +
+      `<div class="ctrl-row" style="margin-bottom:12px">
+        <div class="ctrl-btn" onclick="expandAllCollapse()">全部展开</div>
+        <div class="ctrl-btn" onclick="collapseAllCollapse()">全部收起</div>
+      </div>
+      <hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Collapse(theme = CollapseTheme.DEFAULT) {
+  CollapsePanel {
+    attr {
+      title(<span class="str">"面板标题"</span>)
+      content { /* body view */ }
+    }
+  }
+}`)}</div></div>`;
+    renderCollapse();
+  }
+  else if (comp === 'watermark') {
+    ctrl.innerHTML = ctrlHeader('Watermark','水印') +
+      ctrlGroup('水印文字', `<input type="text" id="wm-text" value="机密文件" oninput="renderWatermark()">`) +
+      ctrlGroup('透明度', `<input type="range" min="0.02" max="0.25" step="0.01" value="0.1" id="wm-op" oninput="renderWatermark()">`) +
+      ctrlGroup('旋转角度', `<input type="range" min="-60" max="0" value="-25" id="wm-angle" oninput="renderWatermark()">`) +
+      ctrlGroup('字号', `<input type="range" min="10" max="22" value="14" id="wm-fs" oninput="renderWatermark()">`) +
+      `<hr class="ctrl-divider">
+      <div class="code-block">${dsl(`Watermark {
+  attr {
+    text(<span class="str">"机密文件"</span>)
+    color(Color(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.1f</span>))
+    rotate(<span class="num">-25f</span>)
+    fontSize(<span class="num">14f</span>)
+    grid(<span class="num">5</span>, <span class="num">6</span>)
+  }
+  content { /* content view */ }
+}`)}</div></div>`;
+    renderWatermark();
+  }
+}
+
+// ─── Loading ──────────────────────────────────────────────────────────────────
+function toggleLoading(v) {
+  const o = document.getElementById('loading-overlay');
+  o.style.display = v ? 'flex' : 'none';
+}
+function updateLoadingText(v) { document.getElementById('loading-text').textContent = v; }
+function updateLoadingOpacity(v) {
+  const o = document.getElementById('loading-overlay');
+  o.style.background = `rgba(0,0,0,${v})`;
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+let toastIconSel='无', toastPosSel='中间';
+function setToastIcon(v,el){toastIconSel=v;document.querySelectorAll('.ctrl-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setToastPos(v,el){toastPosSel=v;document.querySelectorAll('[onclick^="setToastPos"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function showToast() {
+  const icons={'无':'','成功':'✅','错误':'❌','警告':'⚠️'};
+  const pos={'顶部':'10%','中间':'40%','底部':'70%'};
+  const el=document.getElementById('toast-el');
+  const msg=document.getElementById('t-msg').value||'提示';
+  el.style.top=pos[toastPosSel]||'40%';
+  el.style.display='block';
+  document.getElementById('toast-icon-el').textContent=icons[toastIconSel]||'';
+  document.getElementById('toast-icon-el').style.display=icons[toastIconSel]?'block':'none';
+  document.getElementById('toast-msg-el').textContent=msg;
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>el.style.display='none',2200);
+}
+
+// ─── Spin ─────────────────────────────────────────────────────────────────────
+function toggleSpin(v) {
+  const o=document.getElementById('spin-overlay');
+  o.style.display=v?'flex':'none';
+}
+function updateSpinTip(v){document.getElementById('spin-tip').textContent=v;}
+function setSpinSize(v){const sz={'小':'20px','中':'28px','大':'40px'};document.querySelector('#spin-overlay .spinner-blue').style.width=sz[v];document.querySelector('#spin-overlay .spinner-blue').style.height=sz[v];}
+
+// ─── Result ───────────────────────────────────────────────────────────────────
+const resultTypes={
+  SUCCESS:{icon:'✅',color:'#52c41a',title:'操作成功',sub:'数据已保存'},
+  ERROR:{icon:'❌',color:'#ff4d4f',title:'操作失败',sub:'请检查后重试'},
+  WARNING:{icon:'⚠️',color:'#faad14',title:'注意',sub:'此操作不可撤销'},
+  EMPTY:{icon:'📭',color:'#8c8c8c',title:'暂无数据',sub:'试着添加一些内容吧'},
+  NETWORK_ERROR:{icon:'📡',color:'#1677ff',title:'网络错误',sub:'请检查网络连接'},
+  FORBIDDEN:{icon:'🔒',color:'#ff4d4f',title:'无权限',sub:'您没有访问此页面的权限'},
+  NOT_FOUND:{icon:'🔍',color:'#8c8c8c',title:'页面不存在',sub:'您访问的内容已被移除'},
+  CUSTOM:{icon:'🎨',color:'#722ed1',title:'自定义状态',sub:'配置任意图标与内容'},
+};
+function setResultType(v) {
+  const t=resultTypes[v]||resultTypes.SUCCESS;
+  document.getElementById('result-icon').textContent=t.icon;
+  document.getElementById('result-title').textContent=document.getElementById('res-title')?.value||t.title;
+  document.getElementById('result-subtitle').textContent=document.getElementById('res-sub')?.value||t.sub;
+}
+function updateResult() {
+  document.getElementById('result-title').textContent=document.getElementById('res-title').value;
+  document.getElementById('result-subtitle').textContent=document.getElementById('res-sub').value;
+}
+
+// ─── Alert ────────────────────────────────────────────────────────────────────
+const alertCfg={
+  SUCCESS:{bg:'#f6ffed',border:'#b7eb8f',icon:'✅'},
+  WARNING:{bg:'#fffbe6',border:'#ffe58f',icon:'⚠️'},
+  ERROR:{bg:'#fff2f0',border:'#ffccc7',icon:'❌'},
+  INFO:{bg:'#e6f4ff',border:'#91caff',icon:'ℹ️'},
+};
+let alertType='INFO';
+function setAlertType(v,el){alertType=v;document.querySelectorAll('[onclick^="setAlertType"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');updateAlert();}
+function updateAlert() {
+  const cfg=alertCfg[alertType]||alertCfg.INFO;
+  const el=document.getElementById('alert-el');
+  el.style.background=cfg.bg; el.style.borderColor=cfg.border; el.style.border=`1px solid ${cfg.border}`;
+  const iconEl=document.getElementById('alert-icon');
+  iconEl.style.display=document.getElementById('al-icon')?.checked!==false?'':'none';
+  iconEl.textContent=cfg.icon;
+  document.getElementById('alert-title').textContent=document.getElementById('al-title')?.value||'提示信息';
+  document.getElementById('alert-desc').textContent=document.getElementById('al-desc')?.value||'';
+  document.getElementById('alert-close').style.display=document.getElementById('al-close')?.checked!==false?'':'none';
+}
+
+// ─── ProgressBar ──────────────────────────────────────────────────────────────
+const pbColors={蓝色:'linear-gradient(90deg,#1677ff,#40a9ff)',绿色:'linear-gradient(90deg,#52c41a,#73d13d)',橙色:'linear-gradient(90deg,#faad14,#ffc53d)',红色:'linear-gradient(90deg,#ff4d4f,#ff7875)'};
+let pbColorSel='蓝色';
+function updatePB(v) {
+  document.getElementById('pb-fill').style.width=v+'%';
+  document.getElementById('pb-pct-label').textContent=v+'%';
+}
+function setPBColor(v,el){pbColorSel=v;document.getElementById('pb-fill').style.background=pbColors[v];document.querySelectorAll('[onclick^="setPBColor"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setPBShape(v,el){const r=v==='ROUNDED'?'6px':'0';document.getElementById('pb-fill').style.borderRadius=r;document.getElementById('pb-track').style.borderRadius=r;document.querySelectorAll('[onclick^="setPBShape"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function animatePB(){let v=0;const t=setInterval(()=>{v+=2;updatePB(v);if(v>=100)clearInterval(t);},20);}
+
+// ─── Circular Progress ────────────────────────────────────────────────────────
+let circProgress=65,circStyle='SOLID',circStroke=10;
+function drawCircular(canvas,pct,stroke,color,style,size){
+  size=size||canvas.width;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,size,size);
+  const cx=size/2,cy=size/2,r=size/2-stroke-4;
+  // track
+  ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);
+  ctx.strokeStyle='#f0f0f0';ctx.lineWidth=stroke;ctx.stroke();
+  // fill
+  const start=-Math.PI/2,end=start+2*Math.PI*(pct/100);
+  if(style==='GRADIENT'){
+    const g=ctx.createLinearGradient(0,0,size,size);
+    g.addColorStop(0,'#1677ff');g.addColorStop(1,'#40a9ff');
+    ctx.strokeStyle=g;
+  } else if(style==='DASHED'){
+    ctx.setLineDash([6,4]);ctx.strokeStyle=color||'#1677ff';
+  } else {
+    ctx.setLineDash([]);ctx.strokeStyle=color||'#1677ff';
+  }
+  ctx.beginPath();ctx.arc(cx,cy,r,start,end);
+  ctx.lineWidth=stroke;ctx.lineCap='round';ctx.stroke();
+  ctx.setLineDash([]);
+  // label
+  ctx.fillStyle='#1a1a1a';ctx.font=`bold ${size*0.17}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(pct+'%',cx,cy);
+}
+function drawAllCircular(){
+  drawCircular(document.getElementById('circ-canvas'),circProgress,circStroke,null,circStyle,160);
+  drawCircular(document.getElementById('circ2'),70,8,null,'GRADIENT',70);
+  drawCircular(document.getElementById('circ3'),45,8,null,'DASHED',70);
+  drawCircular(document.getElementById('circ4'),100,8,'#52c41a','SOLID',70);
+}
+function updateCircular(v){circProgress=+v;drawAllCircular();}
+function setCircStyle(v,el){circStyle=v;drawAllCircular();document.querySelectorAll('[onclick^="setCircStyle"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function updateCircStroke(v){circStroke=+v;drawAllCircular();}
+
+// ─── StepProgress ─────────────────────────────────────────────────────────────
+let stepCount=4,stepCur=2,stepStyle='HORIZONTAL';
+const stepLabels=['填写信息','确认订单','支付','完成'];
+function renderSteps(){
+  const c=document.getElementById('step-container');
+  if(stepStyle==='HORIZONTAL'){
+    c.innerHTML=`<div style="display:flex;align-items:flex-start;padding:16px 0;overflow-x:auto">` +
+      Array.from({length:stepCount},(_,i)=>{
+        const st=i<stepCur-1?'done':i===stepCur-1?'active':'pending';
+        const dotColor=st==='done'?'#52c41a':st==='active'?'#1677ff':'#d9d9d9';
+        const line=i<stepCount-1?`<div style="flex:1;height:2px;background:${i<stepCur-1?'#52c41a':'#f0f0f0'};margin-top:14px"></div>`:'';
+        return `<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;min-width:60px">
+          <div style="width:28px;height:28px;border-radius:50%;background:${dotColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px">${st==='done'?'✓':(i+1)}</div>
+          <div style="font-size:10px;color:${dotColor};margin-top:4px;text-align:center">${stepLabels[i]||'步骤'+(i+1)}</div>
+        </div>${line}`;
+      }).join('') + '</div>';
+  } else if(stepStyle==='VERTICAL'){
+    c.innerHTML=`<div style="display:flex;flex-direction:column;gap:0;padding:8px 0">` +
+      Array.from({length:stepCount},(_,i)=>{
+        const st=i<stepCur-1?'done':i===stepCur-1?'active':'pending';
+        const dotColor=st==='done'?'#52c41a':st==='active'?'#1677ff':'#d9d9d9';
+        return `<div style="display:flex;gap:12px">
+          <div style="display:flex;flex-direction:column;align-items:center">
+            <div style="width:24px;height:24px;border-radius:50%;background:${dotColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px">${st==='done'?'✓':(i+1)}</div>
+            ${i<stepCount-1?`<div style="width:2px;flex:1;background:${i<stepCur-1?'#52c41a':'#f0f0f0'};min-height:28px;margin:3px 0"></div>`:''}
+          </div>
+          <div style="padding:2px 0 ${i<stepCount-1?'28':'4'}px"><div style="font-size:12px;color:${dotColor};font-weight:${st==='active'?700:400}">${stepLabels[i]||'步骤'+(i+1)}</div></div>
+        </div>`;
+      }).join('') + '</div>';
+  } else if(stepStyle==='DOT'){
+    c.innerHTML=`<div style="display:flex;align-items:center;padding:16px;gap:0">` +
+      Array.from({length:stepCount},(_,i)=>{
+        const done=i<stepCur-1,active=i===stepCur-1;
+        const dc=done?'#52c41a':active?'#1677ff':'#d9d9d9';
+        return `<div style="width:${active?14:10}px;height:${active?14:10}px;border-radius:50%;background:${dc};flex-shrink:0;transition:all .2s"></div>${i<stepCount-1?`<div style="flex:1;height:2px;background:${done?'#52c41a':'#f0f0f0'}"></div>`:''}`;
+      }).join('') + '</div>' +
+      `<div style="text-align:center;font-size:12px;color:#888">步骤 ${stepCur} / ${stepCount}</div>`;
+  } else {
+    c.innerHTML=`<div style="display:flex;border-radius:8px;overflow:hidden;border:1px solid #f0f0f0">` +
+      Array.from({length:stepCount},(_,i)=>{
+        const active=i===stepCur-1;
+        return `<div style="flex:1;padding:10px 4px;text-align:center;background:${active?'#1677ff':'#fff'};color:${active?'#fff':'#888'};font-size:11px;border-right:${i<stepCount-1?'1px solid #f0f0f0':'none'}">${stepLabels[i]||'步骤'+(i+1)}</div>`;
+      }).join('') + '</div>';
+  }
+}
+function updateStepCount(v){stepCount=+v;const slider=document.getElementById('step-cur');if(slider){slider.max=v;if(stepCur>v)stepCur=+v;}renderSteps();}
+function updateStepCur(v){stepCur=+v;renderSteps();}
+function setStepStyle(v,el){stepStyle=v;renderSteps();document.querySelectorAll('[onclick^="setStepStyle"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+
+// ─── LoadMore ─────────────────────────────────────────────────────────────────
+let loadMoreState='IDLE', loadMoreItems=['条目 1','条目 2','条目 3','条目 4','条目 5'];
+function renderLoadMore(){
+  const list=document.getElementById('loadmore-list');
+  list.innerHTML=loadMoreItems.map((t,i)=>`<div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:12px;color:#333;display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;background:#e6f4ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#1677ff;font-weight:700">${i+1}</div>${t}</div>`).join('');
+  const footer=document.getElementById('loadmore-footer');
+  const states={IDLE:'点击加载更多 →',LOADING:'<span style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border:2px solid #1677ff;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite"></div>加载中...</span>',SUCCESS:'✅ 加载成功',NO_MORE:'— 没有更多了 —',ERROR:'❌ 加载失败，点击重试'};
+  footer.innerHTML=states[loadMoreState]||states.IDLE;
+  footer.onclick=()=>{if(loadMoreState==='IDLE'||loadMoreState==='ERROR')triggerLoadMore();};
+}
+function setLoadMoreState(v,el){loadMoreState=v;renderLoadMore();document.querySelectorAll('[onclick^="setLoadMoreState"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function triggerLoadMore(){
+  loadMoreState='LOADING';renderLoadMore();
+  setTimeout(()=>{loadMoreItems=[...loadMoreItems,'条目 '+(loadMoreItems.length+1),'条目 '+(loadMoreItems.length+2)];loadMoreState=loadMoreItems.length>=12?'NO_MORE':'SUCCESS';renderLoadMore();setTimeout(()=>{if(loadMoreState==='SUCCESS')loadMoreState='IDLE';renderLoadMore();},1200);},1500);
+}
+
+// ─── Statistic ────────────────────────────────────────────────────────────────
+function animateCount(el,target,duration,prefix,suffix,isFloat){
+  const start=Date.now();
+  const step=()=>{
+    const p=Math.min((Date.now()-start)/duration,1);
+    const eased=1-Math.pow(1-p,3);
+    const val=target*eased;
+    const fmt=isFloat?val.toFixed(1):Math.floor(val).toLocaleString();
+    el.textContent=prefix+fmt+suffix;
+    if(p<1)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+function renderStatistic(animate){
+  const cards=document.querySelectorAll('.stat-card');
+  cards.forEach(card=>{
+    const val=+card.dataset.val,prefix=card.dataset.prefix,suffix=card.dataset.suffix,label=card.dataset.label,color=card.dataset.color;
+    const isFloat=String(val).includes('.');
+    card.innerHTML=`<div style="background:#fff;border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:#888;margin-bottom:4px">${label}</div>
+      <div class="stat-val" style="font-size:20px;font-weight:700;color:${color};font-variant-numeric:tabular-nums">${prefix}${isFloat?val.toFixed(1):val.toLocaleString()}${suffix}</div>
+    </div>`;
+    if(animate){
+      const valEl=card.querySelector('.stat-val');
+      setTimeout(()=>animateCount(valEl,val,1000,prefix,suffix,isFloat),Math.random()*200);
+    }
+  });
+  document.getElementById('stat-replay').onclick=()=>renderStatistic(true);
+}
+
+// ─── CountDown ────────────────────────────────────────────────────────────────
+let cdTotal=30000,cdRemaining=30000,cdInterval=null,cdRunning=false;
+function formatTime(ms){
+  const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000);
+  const pad=n=>String(n).padStart(2,'0');
+  return{h:pad(h),m:pad(m),s:pad(s)};
+}
+function updateCDDisplay(){
+  const{h,m,s}=formatTime(cdRemaining);
+  // TEXT
+  document.getElementById('cd-text').textContent=`${h}:${m}:${s}`;
+  // COLON
+  document.getElementById('cd-colon').innerHTML=[h,m,s].map((v,i)=>`<div style="background:#1677ff;color:#fff;border-radius:6px;padding:6px 10px;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">${v}</div>${i<2?'<span style="color:#1677ff;font-size:18px;font-weight:700;margin:0 1px">:</span>':''}`).join('');
+  // BLOCK
+  document.getElementById('cd-block').innerHTML=[h,m,s].map((v,i)=>`<div style="text-align:center"><div style="background:#1a1a1a;color:#fff;border-radius:6px;padding:4px 8px;font-size:15px;font-weight:700;font-family:monospace">${v}</div><div style="font-size:9px;color:#888;margin-top:2px">${['时','分','秒'][i]}</div></div>${i<2?'<span style="color:#1a1a1a;font-size:16px;font-weight:700;align-self:flex-start;margin-top:3px">:</span>':''}`).join('');
+}
+function startCountdown(){
+  clearInterval(cdInterval);
+  if(cdRemaining<=0)cdRemaining=cdTotal;
+  cdRunning=true;
+  updateCDDisplay();
+  cdInterval=setInterval(()=>{cdRemaining-=1000;if(cdRemaining<=0){cdRemaining=0;clearInterval(cdInterval);cdRunning=false;}updateCDDisplay();},1000);
+}
+function pauseCountdown(){clearInterval(cdInterval);cdRunning=false;}
+function resetCountdown(){clearInterval(cdInterval);cdRemaining=cdTotal;cdRunning=false;updateCDDisplay();}
+function setCountdownDuration(v,el){const map={'30秒':30000,'5分钟':300000,'1小时':3600000};cdTotal=map[v]||30000;cdRemaining=cdTotal;clearInterval(cdInterval);cdRunning=false;updateCDDisplay();document.querySelectorAll('[onclick^="setCountdownDuration"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+let skAnim='shimmer',skPreset='文章',skTheme='LIGHT';
+const skColors={LIGHT:{bg:'#f0f0f0',hl:'#e0e0e0'},DARK:{bg:'#3a3a3a',hl:'#505050'},BLUE:{bg:'#d6e4ff',hl:'#bfd7ff'}};
+function skLine(w,h){
+  const{bg,hl}=skColors[skTheme];
+  const animStyle=skAnim==='shimmer'?`background:linear-gradient(90deg,${bg} 25%,${hl} 50%,${bg} 75%);background-size:400px 100%;animation:shimmer 1.5s infinite`:skAnim==='pulse'?`background:${bg};animation:pulse 1.5s ease-in-out infinite`:`background:${bg}`;
+  return`<div style="${animStyle};height:${h||10}px;border-radius:4px;width:${w||'100%'};margin-bottom:6px"></div>`;
+}
+function renderSkeleton(){
+  const c=document.getElementById('skeleton-container');
+  let html='<div style="background:#fff;border-radius:10px;padding:12px">';
+  if(skPreset==='文章'){
+    html+=skLine('60%',14)+skLine()+skLine()+skLine('80%')+skLine()+skLine('40%');
+  } else if(skPreset==='用户卡'){
+    html+=`<div style="display:flex;gap:10px;align-items:flex-start">`;
+    const{bg}=skColors[skTheme];
+    const a=skAnim==='shimmer'?`background:linear-gradient(90deg,${bg} 25%,${skColors[skTheme].hl} 50%,${bg} 75%);background-size:400px 100%;animation:shimmer 1.5s infinite`:skAnim==='pulse'?`background:${bg};animation:pulse 1.5s ease-in-out infinite`:`background:${bg}`;
+    html+=`<div style="${a};width:44px;height:44px;border-radius:50%;flex-shrink:0"></div><div style="flex:1">${skLine('70%',12)+skLine('50%',10)}</div></div>`;
+    html+=`<div style="margin-top:10px">`+skLine()+skLine('80%')+skLine('60%')+`</div>`;
+  } else {
+    html+=Array.from({length:3},()=>{
+      const{bg}=skColors[skTheme];
+      const a=skAnim==='shimmer'?`background:linear-gradient(90deg,${bg} 25%,${skColors[skTheme].hl} 50%,${bg} 75%);background-size:400px 100%;animation:shimmer 1.5s infinite`:skAnim==='pulse'?`background:${bg};animation:pulse 1.5s ease-in-out infinite`:`background:${bg}`;
+      return`<div style="display:flex;gap:8px;margin-bottom:10px"><div style="${a};width:36px;height:36px;border-radius:8px;flex-shrink:0"></div><div style="flex:1">${skLine('80%',10)+skLine('50%',8)}</div></div>`;
+    }).join('');
+  }
+  html+='</div>';
+  c.innerHTML=html;
+}
+function setSkAnim(v,el){skAnim=v;renderSkeleton();document.querySelectorAll('[onclick^="setSkAnim"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setSkPreset(v,el){skPreset=v;renderSkeleton();document.querySelectorAll('[onclick^="setSkPreset"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setSkTheme(v,el){skTheme=v;renderSkeleton();document.querySelectorAll('[onclick^="setSkTheme"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+
+// ─── Timeline ─────────────────────────────────────────────────────────────────
+let tlMode='LEFT',tlTheme='DEFAULT';
+const tlItems=[{time:'10:00',text:'订单已创建',status:'done'},{time:'10:05',text:'商家已接单',status:'done'},{time:'10:30',text:'骑手正在配送',status:'active'},{time:'--:--',text:'等待送达',status:'pending'}];
+const tlColors={DEFAULT:'#d9d9d9',PRIMARY:'#1677ff',SUCCESS:'#52c41a'};
+function renderTimeline(){
+  const c=document.getElementById('timeline-container');
+  const dotColor={done:'#52c41a',active:'#1677ff',pending:'#d9d9d9'};
+  const lineColor=tlColors[tlTheme];
+  c.innerHTML=tlItems.map((item,i)=>{
+    const dot=`<div style="width:12px;height:12px;border-radius:50%;background:${dotColor[item.status]};border:2px solid #fff;box-shadow:0 0 0 2px ${dotColor[item.status]};flex-shrink:0"></div>`;
+    const line=i<tlItems.length-1?`<div style="width:2px;flex:1;background:${i<2?lineColor:'#f0f0f0'};margin:4px auto;min-height:24px"></div>`:'';
+    const content=`<div style="flex:1;padding-bottom:${i<tlItems.length-1?4:0}px"><div style="font-size:12px;font-weight:${item.status==='active'?700:400};color:${item.status==='pending'?'#bbb':'#333'}">${item.text}</div><div style="font-size:10px;color:#bbb;margin-top:2px">${item.time}</div></div>`;
+    if(tlMode==='RIGHT') return`<div style="display:flex;gap:8px;align-items:flex-start"><div style="flex:1;text-align:right;padding-bottom:${i<tlItems.length-1?4:0}px"><div style="font-size:12px;font-weight:${item.status==='active'?700:400};color:${item.status==='pending'?'#bbb':'#333'}">${item.text}</div><div style="font-size:10px;color:#bbb;margin-top:2px">${item.time}</div></div><div style="display:flex;flex-direction:column;align-items:center">${dot}${line}</div></div>`;
+    if(tlMode==='ALTERNATE') return`<div style="display:flex;gap:8px;align-items:flex-start">${i%2===0?content:`<div style="flex:1"></div>`}<div style="display:flex;flex-direction:column;align-items:center">${dot}${line}</div>${i%2!==0?content:`<div style="flex:1"></div>`}</div>`;
+    return`<div style="display:flex;gap:8px;align-items:flex-start"><div style="display:flex;flex-direction:column;align-items:center">${dot}${line}</div>${content}</div>`;
+  }).join('');
+}
+function setTimelineMode(v,el){tlMode=v;renderTimeline();document.querySelectorAll('[onclick^="setTimelineMode"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setTimelineTheme(v,el){tlTheme=v;renderTimeline();document.querySelectorAll('[onclick^="setTimelineTheme"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+
+// ─── Badge ────────────────────────────────────────────────────────────────────
+let badgeType='COUNT',badgeColor='RED',badgeCount=5;
+const badgeColors={RED:'#ff4d4f',BLUE:'#1677ff',GREEN:'#52c41a',ORANGE:'#fa8c16',GRAY:'#8c8c8c',PURPLE:'#722ed1'};
+function renderBadge(){
+  const color=badgeColors[badgeColor]||'#ff4d4f';
+  if(badgeType==='DOT') return`<div style="width:10px;height:10px;background:${color};border-radius:50%;border:2px solid #fff"></div>`;
+  if(badgeType==='TEXT') return`<div style="background:${color};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1.5px solid #fff;white-space:nowrap">NEW</div>`;
+  if(badgeType==='RIBBON') return``;
+  const n=badgeCount>99?'99+':String(badgeCount);
+  return`<div style="background:${color};color:#fff;font-size:10px;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff;font-weight:700">${n}</div>`;
+}
+function setBadgeType(v,el){badgeType=v;document.getElementById('badge-el').innerHTML=renderBadge();document.querySelectorAll('[onclick^="setBadgeType"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setBadgeColor(v,el){badgeColor=v;document.getElementById('badge-el').innerHTML=renderBadge();document.getElementById('badge-count-el').style.background=badgeColors[v];document.querySelectorAll('[onclick^="setBadgeColor"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function updateBadge(){badgeCount=+(document.getElementById('bg-count').value||0);document.getElementById('badge-count-el').textContent=badgeCount>99?'99+':badgeCount;document.getElementById('badge-el').innerHTML=renderBadge();}
+
+// ─── Tag ──────────────────────────────────────────────────────────────────────
+let tagStyle='FILLED',tagShape='ROUNDED',tagColor='PRIMARY';
+const tagPresets={PRIMARY:{fill:'#1677ff',text:'#fff',border:'#1677ff',ghost:'#e6f4ff',ghostText:'#1677ff'},SUCCESS:{fill:'#52c41a',text:'#fff',border:'#52c41a',ghost:'#f6ffed',ghostText:'#52c41a'},WARNING:{fill:'#faad14',text:'#fff',border:'#faad14',ghost:'#fffbe6',ghostText:'#d48806'},DANGER:{fill:'#ff4d4f',text:'#fff',border:'#ff4d4f',ghost:'#fff2f0',ghostText:'#cf1322'},PURPLE:{fill:'#722ed1',text:'#fff',border:'#722ed1',ghost:'#f9f0ff',ghostText:'#722ed1'}};
+const tagLabels=['设计','前端','Kotlin','跨平台','UI组件','开源'];
+function renderTags(){
+  const c=document.getElementById('tag-container');
+  const p=tagPresets[tagColor]||tagPresets.PRIMARY;
+  const closable=document.getElementById('tg-close')?.checked;
+  const checkable=document.getElementById('tg-check')?.checked;
+  const br=tagShape==='PILL'?'100px':tagShape==='SQUARE'?'0':'4px';
+  let bg,color,border;
+  if(tagStyle==='FILLED'){bg=p.fill;color=p.text;border='transparent';}
+  else if(tagStyle==='OUTLINE'){bg='transparent';color=p.fill;border=p.border;}
+  else if(tagStyle==='GHOST'){bg=p.ghost;color=p.ghostText;border=p.border;}
+  else{bg='transparent';color=p.fill;border='transparent';}
+  c.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 0">` +
+    tagLabels.map((t,i)=>`<div style="background:${i%2===0||!checkable?bg:p.ghost};color:${color};border:1px solid ${border};border-radius:${br};padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;transition:all .2s">${t}${closable?`<span style="color:${color};opacity:.7">✕</span>`:''}</div>`).join('') +
+    '</div>' +
+    `<div style="margin-top:6px;font-size:10px;color:#aaa">样式: ${tagStyle} · 形状: ${tagShape} · 颜色: ${tagColor}</div>`;
+}
+function setTagStyle(v,el){tagStyle=v;renderTags();document.querySelectorAll('[onclick^="setTagStyle"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setTagShape(v,el){tagShape=v;renderTags();document.querySelectorAll('[onclick^="setTagShape"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setTagColor(v,el){tagColor=v;renderTags();document.querySelectorAll('[onclick^="setTagColor"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+
+// ─── Rate ─────────────────────────────────────────────────────────────────────
+let rateVal=3,rateShapeChar='★';
+function renderRateStars(){
+  const max=+(document.getElementById('rt-max')?.value||5);
+  const stars=document.getElementById('rate-stars');
+  stars.innerHTML=Array.from({length:max},(_,i)=>`<span style="font-size:26px;color:${i<rateVal?'#faad14':'#e8e8e8'};cursor:pointer;transition:color .15s" onclick="setRate(${i+1})">${rateShapeChar}</span>`).join('');
+  document.getElementById('rate-val-label').textContent=rateVal;
+  document.getElementById('rate-max-label').textContent=max;
+}
+function setRate(v){rateVal=v;renderRateStars();}
+function setRateShape(v,el){const m={'★ 星形':'★','♥ 爱心':'♥','◆ 菱形':'◆','● 圆形':'●'};rateShapeChar=m[v]||'★';renderRateStars();document.querySelectorAll('[onclick^="setRateShape"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+
+// ─── NoticeBar ────────────────────────────────────────────────────────────────
+function updateNoticeBar(){
+  const txt=document.getElementById('nb-text').value;
+  document.getElementById('noticebar-text').textContent=txt;
+}
+function setNoticeMode(v,el){
+  const txt=document.getElementById('noticebar-text');
+  txt.style.animation=v==='SINGLE'?'none':v==='SCROLL'?'marquee 12s linear infinite':'marquee 8s linear infinite';
+  document.querySelectorAll('[onclick^="setNoticeMode"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+}
+document.getElementById('noticebar-close').onclick=function(){document.getElementById('noticebar-el').style.display='none';};
+
+// ─── FloatButton ──────────────────────────────────────────────────────────────
+let fabExpanded=false,fabColor='#1677ff',fabCount=4;
+const fabActions=[{icon:'📷',label:'拍照'},{icon:'📁',label:'文件'},{icon:'✏️',label:'编辑'},{icon:'🗑',label:'删除'}];
+const fabBgColors={PRIMARY:'#1677ff',SUCCESS:'#52c41a',WARNING:'#faad14',DANGER:'#ff4d4f'};
+function renderFabActions(){
+  const btn=document.getElementById('fab-btn');
+  btn.style.background=fabColor;
+  btn.style.boxShadow=`0 4px 12px ${fabColor}66`;
+  const actionsEl=document.getElementById('fab-actions');
+  actionsEl.innerHTML=fabActions.slice(0,fabCount).map(a=>`<div class="fab-action-item" style="display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(12px);transition:all .25s;pointer-events:none">
+    <div style="background:rgba(30,30,30,.7);color:#fff;font-size:11px;padding:3px 8px;border-radius:12px;white-space:nowrap">${a.label}</div>
+    <div style="width:38px;height:38px;border-radius:50%;background:${fabColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px ${fabColor}88">${a.icon}</div>
+  </div>`).join('');
+}
+function toggleFab(){
+  fabExpanded=!fabExpanded;
+  document.getElementById('fab-btn').style.transform=fabExpanded?'rotate(45deg)':'rotate(0)';
+  document.querySelectorAll('.fab-action-item').forEach((el,i)=>{
+    setTimeout(()=>{
+      el.style.opacity=fabExpanded?'1':'0';
+      el.style.transform=fabExpanded?'translateY(0)':'translateY(12px)';
+      el.style.pointerEvents=fabExpanded?'auto':'none';
+    },fabExpanded?i*60:(fabCount-1-i)*40);
+  });
+}
+document.getElementById('fab-btn').onclick=toggleFab;
+function setFabColor(v,el){fabColor=fabBgColors[v]||'#1677ff';renderFabActions();document.querySelectorAll('[onclick^="setFabColor"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function updateFabCount(v){fabCount=+v;fabExpanded=false;renderFabActions();document.getElementById('fab-btn').style.transform='rotate(0)';}
+
+// ─── Collapse ─────────────────────────────────────────────────────────────────
+let collapseTheme='DEFAULT',collapseCount=3;
+const collapsePanels=[{title:'什么是 KuiklyUI？',body:'KuiklyUI 是腾讯开源的跨平台 UI 框架，支持 iOS / Android / HarmonyOS，基于 Kotlin 编写。'},{title:'支持哪些组件？',body:'KuiklyLoadingView 提供 20+ 高质量反馈与数据展示组件，对标 Ant Design、Vant、NutUI 等主流组件库。'},{title:'如何集成？',body:'在 build.gradle.kts 中添加依赖：implementation("com.tencent.kuiklybase:loading:1.0.0")'},{title:'是否支持暗色模式？',body:'是的，SkeletonTheme.DARK、CollapseTheme.CARD 等均支持暗色主题配置。'},{title:'许可证',body:'本项目遵循腾讯开源许可证，详见 LICENSE 文件。'}];
+const collapseStates=new Set();
+function renderCollapse(){
+  const c=document.getElementById('collapse-container');
+  const isCard=collapseTheme==='CARD';
+  const isBorderless=collapseTheme==='BORDERLESS';
+  let html=isCard?'':`<div style="border:${isBorderless?'none':'1px solid #e8e8e8'};border-radius:8px;overflow:hidden">`;
+  collapsePanels.slice(0,collapseCount).forEach((panel,i)=>{
+    const open=collapseStates.has(i);
+    const cardStyle=isCard?`border:1px solid #e8e8e8;border-radius:8px;overflow:hidden;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,0,0,.06)`:'';
+    html+=`<div style="${cardStyle}">
+      <div style="display:flex;align-items:center;padding:11px 14px;background:${open?'#fafafa':'#fff'};cursor:pointer;${!isCard&&i>0?'border-top:1px solid #f0f0f0':''}" onclick="toggleCollapse(${i})">
+        <span style="flex:1;font-size:13px;font-weight:${open?600:400};color:#1a1a1a">${panel.title}</span>
+        <span style="font-size:14px;color:${open?'#1677ff':'#aaa'};transform:rotate(${open?90:0}deg);transition:transform .2s;display:inline-block">›</span>
+      </div>
+      ${open?`<div style="padding:10px 14px;font-size:12px;color:#666;line-height:1.6;background:#fff;border-top:1px solid #f0f0f0">${panel.body}</div>`:''}
+    </div>`;
+  });
+  if(!isCard) html+='</div>';
+  c.innerHTML=html;
+}
+function toggleCollapse(i){if(collapseStates.has(i))collapseStates.delete(i);else collapseStates.add(i);renderCollapse();}
+function setCollapseTheme(v,el){collapseTheme=v;renderCollapse();document.querySelectorAll('[onclick^="setCollapseTheme"]').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function updateCollapseCount(v){collapseCount=+v;renderCollapse();}
+function expandAllCollapse(){for(let i=0;i<collapseCount;i++)collapseStates.add(i);renderCollapse();}
+function collapseAllCollapse(){collapseStates.clear();renderCollapse();}
+
+// ─── Watermark ────────────────────────────────────────────────────────────────
+function renderWatermark(){
+  const canvas=document.getElementById('wm-canvas');
+  const screen=document.getElementById('demo-watermark').querySelector('div');
+  const W=screen.offsetWidth||280,H=screen.offsetHeight||548;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const text=document.getElementById('wm-text')?.value||'机密文件';
+  const opacity=+(document.getElementById('wm-op')?.value||0.1);
+  const angle=+(document.getElementById('wm-angle')?.value||-25)*Math.PI/180;
+  const fontSize=+(document.getElementById('wm-fs')?.value||14);
+  ctx.font=`${fontSize}px sans-serif`;
+  ctx.fillStyle=`rgba(0,0,0,${opacity})`;
+  ctx.save();
+  const tileW=ctx.measureText(text).width+40,tileH=fontSize*2.5;
+  for(let y=-tileH;y<H+tileH;y+=tileH){
+    for(let x=-tileW;x<W+tileW;x+=tileW){
+      ctx.save();ctx.translate(x+tileW/2,y+tileH/2);ctx.rotate(angle);
+      ctx.fillText(text,-ctx.measureText(text).width/2,fontSize/3);
+      ctx.restore();
+    }
+  }
+  ctx.restore();
+}
+
+// ─── Initial render ───────────────────────────────────────────────────────────
+renderControls('loading');
+updateAlert();
+setTimeout(()=>{drawAllCircular();renderWatermark();},100);
+</script>
+</body>
+</html>
