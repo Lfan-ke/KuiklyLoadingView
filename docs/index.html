@@ -12,7 +12,8 @@
   --accent:#7c3aed;--accent2:#ec4899;
   --accent-rgb:124,58,237;
   --blue:#3b82f6;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--purple:#7c3aed;
-  --sidebar-bg:#0d1117;--sidebar-text:#8b949e;--sidebar-active:rgba(124,58,237,.18);--sidebar-active-text:#f0e6ff;
+  --sidebar-bg:#f8fafc;--sidebar-text:#475569;--sidebar-active:rgba(124,58,237,.12);--sidebar-active-text:#5b21b6;
+  --sidebar-hover-bg:rgba(0,0,0,.04);--sidebar-input-bg:rgba(0,0,0,.04);--sidebar-border:var(--border);--sidebar-scrollbar:#cbd5e1;--sidebar-dim:#94a3b8;
   --main-bg:#f1f5f9;--card-bg:#fff;--text:#1e293b;--text-muted:#64748b;
   --border:#e8ecf4;
   --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
@@ -24,6 +25,8 @@
 }
 [data-theme="dark"]{
   --main-bg:#0a0f1e;--card-bg:#111827;--text:#e2e8f0;--text-muted:#94a3b8;--border:#1e293b;
+  --sidebar-bg:#0d1117;--sidebar-text:#8b949e;--sidebar-active:rgba(124,58,237,.18);--sidebar-active-text:#f0e6ff;
+  --sidebar-hover-bg:rgba(255,255,255,.06);--sidebar-input-bg:rgba(255,255,255,.06);--sidebar-border:rgba(255,255,255,.05);--sidebar-scrollbar:#2a2a3a;--sidebar-dim:#484f58;
 }
 [data-theme="dark"] #controls{background:rgba(17,24,39,.98);border-left-color:rgba(255,255,255,.08)}
 [data-theme="dark"] .ctrl-header{border-bottom-color:rgba(255,255,255,.08)}
@@ -35,6 +38,17 @@
 [data-theme="dark"] .ctrl-toggle{color:#c9d1d9}
 [data-theme="dark"] .ctrl-divider{border-top-color:rgba(255,255,255,.08)}
 [data-theme="dark"] #center{background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.15) 0%,transparent 70%)}
+[data-theme="dark"] .phone-screen{background:#111827}
+[data-theme="dark"] .demo>div{background:#111827!important;color:#e2e8f0}
+[data-theme="dark"] .demo div[style*="background:#fff"]{background:#1e293b!important}
+[data-theme="dark"] .demo div[style*="background:#f5f5f5"]{background:#111827!important}
+[data-theme="dark"] .demo div[style*="background:#f0f0f0"]{background:#374151!important}
+[data-theme="dark"] .demo div[style*="background:#e8e8e8"]{background:#374151!important}
+[data-theme="dark"] .demo div[style*="color:#333"]{color:#e2e8f0!important}
+[data-theme="dark"] .demo div[style*="color:#888"]{color:#94a3b8!important}
+[data-theme="dark"] .demo div[style*="color:#666"]{color:#94a3b8!important}
+[data-theme="dark"] .demo div[style*="color:#1a1a1a"]{color:#e2e8f0!important}
+[data-theme="dark"] .section-title{color:#64748b}
 body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft YaHei UI','Microsoft YaHei','微软雅黑','JetBrains Mono',system-ui,-apple-system,sans-serif;background:var(--main-bg);color:var(--text);display:flex;flex-direction:column;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
 
 /* ── Top bar ── */
@@ -47,27 +61,26 @@ body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft 
 #topbar .logo-icon{width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;border:1px solid rgba(255,255,255,.2)}
 #topbar .logo-text{display:flex;flex-direction:column;line-height:1.2}
 #topbar .logo-subtitle{font-size:10px;font-weight:400;opacity:.7;letter-spacing:.5px}
-#topbar a{color:rgba(255,255,255,.9);font-size:12px;text-decoration:none;display:flex;align-items:center;gap:5px;padding:6px 12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;transition:all .2s}
-#topbar a:hover{background:rgba(255,255,255,.22);color:#fff;transform:translateY(-1px)}
-#theme-toggle{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .2s}
-#theme-toggle:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
+#topbar a,#theme-toggle{width:36px;height:36px;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .2s}
+#topbar a:hover,#theme-toggle:hover{background:rgba(255,255,255,.28);transform:translateY(-1px)}
+#topbar a svg,#theme-toggle svg{width:18px;height:18px}
 
 /* ── Body row ── */
 #body-row{flex:1;display:flex;overflow:hidden}
 
 /* ── Sidebar ── */
-#sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;padding-bottom:16px;border-right:1px solid rgba(255,255,255,.05)}
+#sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;padding-bottom:16px;border-right:1px solid var(--sidebar-border)}
 #sidebar::-webkit-scrollbar{width:4px}
-#sidebar::-webkit-scrollbar-thumb{background:#2a2a3a;border-radius:2px}
+#sidebar::-webkit-scrollbar-thumb{background:var(--sidebar-scrollbar);border-radius:2px}
 #sidebar .sidebar-search{padding:10px 12px;position:sticky;top:0;background:var(--sidebar-bg);z-index:2}
-#sidebar .sidebar-search input{width:100%;padding:7px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.06);color:#c9d1d9;font-size:12px;outline:none;font-family:inherit;transition:border-color .2s}
-#sidebar .sidebar-search input:focus{border-color:rgba(124,58,237,.5);background:rgba(255,255,255,.1)}
-#sidebar .sidebar-search input::placeholder{color:#484f58}
-#sidebar .version{color:#484f58;font-size:10px;padding:8px 16px 2px;letter-spacing:.5px}
-.cat-label{color:#484f58;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;padding:12px 16px 4px}
+#sidebar .sidebar-search input{width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--sidebar-input-bg);color:var(--text);font-size:12px;outline:none;font-family:inherit;transition:border-color .2s}
+#sidebar .sidebar-search input:focus{border-color:rgba(124,58,237,.5)}
+#sidebar .sidebar-search input::placeholder{color:var(--sidebar-dim)}
+#sidebar .version{color:var(--sidebar-dim);font-size:10px;padding:8px 16px 2px;letter-spacing:.5px}
+.cat-label{color:var(--sidebar-dim);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;padding:12px 16px 4px}
 .nav-item{display:block;padding:7px 16px;color:var(--sidebar-text);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;user-select:none;border-radius:0 6px 6px 0;margin-right:6px}
-.nav-item:hover{color:#c9d1d9;background:rgba(255,255,255,.06);border-left-color:rgba(124,58,237,.4)}
-.nav-item.active{color:#f0e6ff;background:rgba(124,58,237,.18);border-left-color:var(--accent);font-weight:500}
+.nav-item:hover{color:var(--sidebar-active-text);background:var(--sidebar-hover-bg);border-left-color:rgba(124,58,237,.4)}
+.nav-item.active{color:var(--sidebar-active-text);background:var(--sidebar-active);border-left-color:var(--accent);font-weight:500}
 
 /* ── Main area ── */
 #main{flex:1;display:flex;overflow:hidden}
@@ -170,9 +183,8 @@ body{font-family:'HarmonyOS Sans SC','HarmonyOS Sans','鸿蒙黑体','Microsoft 
       <span class="logo-subtitle">Loading &amp; UI Components</span>
     </div>
   </div>
-  <a href="https://github.com/Lfan-ke/KuiklyLoadingView" target="_blank">
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-    GitHub
+  <a href="https://github.com/Lfan-ke/KuiklyLoadingView" target="_blank" title="GitHub">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
   </a>
   <button id="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
     <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.75 15.5a9 9 0 01-11.25-11.2A9 9 0 1021.75 15.5z"/></svg>
