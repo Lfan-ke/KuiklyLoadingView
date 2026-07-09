@@ -22,6 +22,7 @@ import com.tencent.kuikly.core.reactive.handler.observable
 import com.tencent.kuikly.core.views.Text
 import com.tencent.kuikly.core.views.View
 import com.tencent.kuiklybase.loading.Loading
+import com.tencent.kuikly.core.views.ActivityIndicator
 
 @Page("LoadingViewDemoPage")
 internal class LoadingViewDemoPage : BasePager() {
@@ -29,6 +30,9 @@ internal class LoadingViewDemoPage : BasePager() {
     private var showFullScreen by observable(false)
     private var showPartial by observable(false)
     private var showWithTimeout by observable(false)
+    private var showCustomSize by observable(false)
+    private var showCustomContent by observable(false)
+    private var showWithDelay by observable(false)
 
     override fun body(): ViewBuilder {
         val ctx = this
@@ -99,6 +103,66 @@ internal class LoadingViewDemoPage : BasePager() {
                         }
                     }
                 }
+                View {
+                    attr {
+                        height(48f)
+                        backgroundColor(Color(0xFF7B1FA2L))
+                        borderRadius(8f)
+                        justifyContentCenter()
+                        alignItemsCenter()
+                        marginBottom(12f)
+                    }
+                    event {
+                        click { ctx.showCustomSize = true }
+                    }
+                    Text {
+                        attr {
+                            color(Color.WHITE)
+                            fontSize(15f)
+                            text("自定义指示器尺寸（indicatorSize=3）")
+                        }
+                    }
+                }
+                View {
+                    attr {
+                        height(48f)
+                        backgroundColor(Color(0xFF00796BL))
+                        borderRadius(8f)
+                        justifyContentCenter()
+                        alignItemsCenter()
+                        marginBottom(12f)
+                    }
+                    event {
+                        click { ctx.showCustomContent = true }
+                    }
+                    Text {
+                        attr {
+                            color(Color.WHITE)
+                            fontSize(15f)
+                            text("自定义加载内容（customContent）")
+                        }
+                    }
+                }
+                View {
+                    attr {
+                        height(48f)
+                        backgroundColor(Color(0xFF37474FL))
+                        borderRadius(8f)
+                        justifyContentCenter()
+                        alignItemsCenter()
+                        marginBottom(12f)
+                    }
+                    event {
+                        click { ctx.showWithDelay = true }
+                    }
+                    Text {
+                        attr {
+                            color(Color.WHITE)
+                            fontSize(15f)
+                            text("延迟 800ms 显示（快速操作不闪烁）")
+                        }
+                    }
+                }
                 Loading {
                     attr {
                         visible(ctx.showPartial)
@@ -116,6 +180,10 @@ internal class LoadingViewDemoPage : BasePager() {
                     fullScreen(true)
                     loadingText("全屏加载中…")
                     maskColor(Color(red255 = 0, green255 = 0, blue255 = 0, alpha01 = 0.5f))
+                    timeoutMs(3000)
+                }
+                event {
+                    onTimeout { ctx.showFullScreen = false }
                 }
             }
             Loading {
@@ -127,6 +195,53 @@ internal class LoadingViewDemoPage : BasePager() {
                 }
                 event {
                     onTimeout { ctx.showWithTimeout = false }
+                }
+            }
+            Loading {
+                attr {
+                    visible(ctx.showCustomSize)
+                    fullScreen(true)
+                    loadingText("自定义尺寸")
+                    indicatorSize(3f)
+                    timeoutMs(3000)
+                }
+                event {
+                    onTimeout { ctx.showCustomSize = false }
+                }
+            }
+            Loading {
+                attr {
+                    visible(ctx.showCustomContent)
+                    fullScreen(true)
+                    timeoutMs(3000)
+                    customContent {
+                        ActivityIndicator {
+                            attr { isGrayStyle(true) }
+                        }
+                        Text {
+                            attr {
+                                marginTop(8f)
+                                fontSize(12f)
+                                color(Color.WHITE)
+                                text("自定义内容区域")
+                            }
+                        }
+                    }
+                }
+                event {
+                    onTimeout { ctx.showCustomContent = false }
+                }
+            }
+            Loading {
+                attr {
+                    visible(ctx.showWithDelay)
+                    fullScreen(true)
+                    loadingText("延迟后显示")
+                    delayMs(800)
+                    timeoutMs(3000)
+                }
+                event {
+                    onTimeout { ctx.showWithDelay = false }
                 }
             }
         }
