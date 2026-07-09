@@ -1455,7 +1455,7 @@ function renderWatermark(){
   const angle=+(document.getElementById('wm-angle')?.value||-25)*Math.PI/180;
   const fontSize=+(document.getElementById('wm-fs')?.value||14);
   ctx.font=`${fontSize}px sans-serif`;
-  ctx.fillStyle=`rgba(0,0,0,${opacity})`;
+  ctx.fillStyle=_darkMode?`rgba(255,255,255,${opacity})`:`rgba(0,0,0,${opacity})`;
   ctx.save();
   const tileW=ctx.measureText(text).width+40,tileH=fontSize*2.5;
   for(let y=-tileH;y<H+tileH;y+=tileH){
@@ -1485,13 +1485,8 @@ function filterSidebar(query) {
   });
 }
 
-// ─── Initial render ───────────────────────────────────────────────────────────
-renderControls('loading');
-updateAlert();
-setTimeout(()=>{drawAllCircular();renderWatermark();},100);
-
 // ─── Dark/Light theme toggle ──────────────────────────────────────────────────
-let _darkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+let _darkMode = false;
 function toggleTheme(){
   _darkMode = !_darkMode;
   const mode = _darkMode ? 'dark' : 'light';
@@ -1505,6 +1500,7 @@ function toggleTheme(){
   renderLoadMore();
   renderCollapse();
   renderRateStars();
+  renderWatermark();
 }
 (function initTheme(){
   var s;
@@ -1522,6 +1518,11 @@ function toggleTheme(){
     document.getElementById('themeIconSun').style.display  = _darkMode?'':'none';
   });
 })();
+
+// ─── Initial render ───────────────────────────────────────────────────────────
+renderControls('loading');
+updateAlert();
+setTimeout(()=>{drawAllCircular();renderWatermark();},100);
 </script>
 </div><!-- end #body-row -->
 </body>
