@@ -56,8 +56,14 @@ import com.tencent.kuiklybase.loading.BadgeType
 import com.tencent.kuiklybase.loading.CountDown
 import com.tencent.kuiklybase.loading.CountDownFormat
 import com.tencent.kuiklybase.loading.CountDownStyle
+import com.tencent.kuiklybase.loading.NoticeBar
+import com.tencent.kuiklybase.loading.NoticeBarAction
+import com.tencent.kuiklybase.loading.NoticeBarIcon
+import com.tencent.kuiklybase.loading.NoticeBarScrollMode
 import com.tencent.kuiklybase.loading.Rate
 import com.tencent.kuiklybase.loading.RateShape
+import com.tencent.kuiklybase.loading.Spin
+import com.tencent.kuiklybase.loading.SpinTipPosition
 import com.tencent.kuiklybase.loading.Tag
 import com.tencent.kuiklybase.loading.TagColor
 import com.tencent.kuiklybase.loading.TagGroup
@@ -107,6 +113,9 @@ internal class LoadingViewDemoPage : BasePager() {
     private var rateValue1 by observable(3f)
     private var rateValue2 by observable(2.5f)
     private var rateValue3 by observable(4f)
+
+    // --- Spin state ---
+    private var spinVisible by observable(false)
 
     // --- Skeleton state ---
     private var skArticleLoading by observable(true)
@@ -1221,6 +1230,150 @@ internal class LoadingViewDemoPage : BasePager() {
                             emptyChar("⬜")
                             size(24f)
                             readonly(true)
+                        }
+                    }
+                }
+
+                // ── NoticeBar ────────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("公告栏 NoticeBar")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(12f)
+                        marginLeft(16f)
+                    }
+                }
+                NoticeBar {
+                    attr {
+                        text("重要通知：系统将于今晚 22:00 进行例行维护，请注意保存数据，维护期间服务暂停约 30 分钟。")
+                        icon(NoticeBarIcon.BELL)
+                        action(NoticeBarAction.CLOSE)
+                    }
+                }
+                View { attr { height(8f) } }
+                NoticeBar {
+                    attr {
+                        text("活动预告：双 11 大促即将开始，全场商品最高享 7 折优惠！")
+                        icon(NoticeBarIcon.WARNING)
+                        action(NoticeBarAction.LINK)
+                        backgroundColor(Color(0xFFFFF2E8L))
+                        textColor(Color(0xFFD46B08L))
+                        iconColor(Color(0xFFFFA940L))
+                    }
+                    event { onLinkClick { /* navigate */ } }
+                }
+                View { attr { height(8f) } }
+                NoticeBar {
+                    attr {
+                        text("本 App 使用 Cookies 以提升您的体验。继续使用即代表您同意我们的隐私政策。")
+                        icon(NoticeBarIcon.INFO)
+                        action(NoticeBarAction.NONE)
+                        scrollMode(NoticeBarScrollMode.NEVER)
+                        wrapable(true)
+                        height(60f)
+                        backgroundColor(Color(0xFFE6F4FFL))
+                        textColor(Color(0xFF0958D9L))
+                        iconColor(Color(0xFF1677FFL))
+                    }
+                }
+                View { attr { height(16f) } }
+
+                // ── Spin ─────────────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("容器加载 Spin")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(12f)
+                        marginLeft(16f)
+                    }
+                }
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("点击切换 spinning 状态"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Spin {
+                        attr {
+                            spinning(ctx.spinVisible)
+                            tip("数据加载中，请稍候…")
+                            content {
+                                View {
+                                    attr {
+                                        flexDirectionColumn()
+                                        padding(16f)
+                                        borderRadius(8f)
+                                        backgroundColor(Color(0xFFF5F5F5L))
+                                    }
+                                    repeat(3) { idx ->
+                                        View {
+                                            attr {
+                                                flexDirectionRow()
+                                                alignItems(FlexAlign.CENTER)
+                                                marginBottom(if (idx < 2) 12f else 0f)
+                                            }
+                                            View {
+                                                attr {
+                                                    size(40f, 40f)
+                                                    borderRadius(20f)
+                                                    backgroundColor(Color(0xFFD9D9D9L))
+                                                    marginRight(12f)
+                                                }
+                                            }
+                                            View {
+                                                attr { flex(1f); flexDirectionColumn() }
+                                                View { attr { height(12f); borderRadius(2f); backgroundColor(Color(0xFFD9D9D9L)); marginBottom(6f) } }
+                                                View { attr { height(10f); borderRadius(2f); backgroundColor(Color(0xFFE8E8E8L)); flex(0.7f) } }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    View { attr { height(8f) } }
+                    View {
+                        attr {
+                            height(36f)
+                            paddingLeft(20f)
+                            paddingRight(20f)
+                            borderRadius(4f)
+                            backgroundColor(Color(0xFF1677FFL))
+                            allCenter()
+                        }
+                        event { click { ctx.spinVisible = !ctx.spinVisible } }
+                        Text {
+                            attr {
+                                text(if (ctx.spinVisible) "停止加载" else "开始加载")
+                                fontSize(13f)
+                                color(Color(0xFFFFFFFFL))
+                            }
+                        }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("右侧提示位置"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Spin {
+                        attr {
+                            spinning(true)
+                            tip("加载中")
+                            tipPosition(SpinTipPosition.RIGHT)
+                            graySpinner(true)
+                            content {
+                                View {
+                                    attr { height(80f); backgroundColor(Color(0xFFF5F5F5L)); borderRadius(8f); allCenter() }
+                                    Text { attr { text("内容区域"); fontSize(14f); color(Color(0xFF999999L)) } }
+                                }
+                            }
                         }
                     }
                 }
