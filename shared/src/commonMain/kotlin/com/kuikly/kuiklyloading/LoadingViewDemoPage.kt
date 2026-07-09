@@ -72,6 +72,11 @@ import com.tencent.kuiklybase.loading.TagStyle
 import com.tencent.kuiklybase.loading.Toast
 import com.tencent.kuiklybase.loading.ToastIcon
 import com.tencent.kuiklybase.loading.ToastPosition
+import com.tencent.kuiklybase.loading.Countdown
+import com.tencent.kuiklybase.loading.CountdownFormat
+import com.tencent.kuiklybase.loading.CountdownStyle
+import com.tencent.kuiklybase.loading.Rating
+import com.tencent.kuiklybase.loading.RatingIcon
 
 @Page("LoadingViewDemoPage")
 internal class LoadingViewDemoPage : BasePager() {
