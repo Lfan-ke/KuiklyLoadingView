@@ -32,6 +32,20 @@ fun ViewContainer<*, *>.Skeleton(init: SkeletonView.() -> Unit) {
     addChild(SkeletonView(), init)
 }
 
+/**
+ * Built-in color themes for [SkeletonView].
+ * Pass to [SkeletonAttr.theme] to apply light or dark skeleton colors without
+ * manually specifying [SkeletonAttr.baseColor] and [SkeletonAttr.highlightColor].
+ */
+enum class SkeletonTheme {
+    /** Default light theme - gray blocks on white background (Material/Ant Design style). */
+    LIGHT,
+    /** Dark theme - deep gray blocks for dark-mode layouts (NutUI/Varlet dark style). */
+    DARK,
+    /** Subtle blue-tinted theme matching Ant Design brand palette. */
+    BLUE,
+}
+
 /** Animation style for skeleton placeholder elements. */
 enum class SkeletonAnimation {
     /** Static gray blocks, no animation. */
@@ -139,6 +153,27 @@ class SkeletonAttr : ComposeAttr() {
     /** Shorthand to enable or disable animation. */
     fun animated(enable: Boolean) {
         animation = if (enable) SkeletonAnimation.SHIMMER else SkeletonAnimation.NONE
+    }
+
+    /**
+     * Convenience setter that applies a pre-configured [SkeletonTheme].
+     * Overrides [baseColor] and [highlightColor] with theme defaults.
+     */
+    fun theme(t: SkeletonTheme) {
+        when (t) {
+            SkeletonTheme.LIGHT -> {
+                baseColor = Color(0xFFE8E8E8L)
+                highlightColor = Color(0xFFF2F2F2L)
+            }
+            SkeletonTheme.DARK -> {
+                baseColor = Color(0xFF3A3A3AL)
+                highlightColor = Color(0xFF4E4E4EL)
+            }
+            SkeletonTheme.BLUE -> {
+                baseColor = Color(0xFFD6E4FFL)
+                highlightColor = Color(0xFFE8F0FEL)
+            }
+        }
     }
 
     /**
