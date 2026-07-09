@@ -53,6 +53,11 @@ import com.tencent.kuiklybase.loading.TimelineTheme
 import com.tencent.kuiklybase.loading.Badge
 import com.tencent.kuiklybase.loading.BadgeColor
 import com.tencent.kuiklybase.loading.BadgeType
+import com.tencent.kuiklybase.loading.CountDown
+import com.tencent.kuiklybase.loading.CountDownFormat
+import com.tencent.kuiklybase.loading.CountDownStyle
+import com.tencent.kuiklybase.loading.Rate
+import com.tencent.kuiklybase.loading.RateShape
 import com.tencent.kuiklybase.loading.Tag
 import com.tencent.kuiklybase.loading.TagColor
 import com.tencent.kuiklybase.loading.TagGroup
@@ -97,6 +102,11 @@ internal class LoadingViewDemoPage : BasePager() {
 
     // --- Timeline state ---
     private var timelinePending by observable(true)
+
+    // --- Rate state ---
+    private var rateValue1 by observable(3f)
+    private var rateValue2 by observable(2.5f)
+    private var rateValue3 by observable(4f)
 
     // --- Skeleton state ---
     private var skArticleLoading by observable(true)
@@ -1070,6 +1080,148 @@ internal class LoadingViewDemoPage : BasePager() {
                                     }
                                 }
                             }
+                    }
+                }
+
+                // ── CountDown ─────────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("倒计时 CountDown")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(16f)
+                        marginLeft(16f)
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("纯文本样式"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    CountDown {
+                        attr {
+                            totalSeconds(3600L)
+                            format(CountDownFormat.HH_MM_SS)
+                            style(CountDownStyle.PLAIN)
+                            fontSize(20f)
+                            textColor(Color(0xFF1677FFL))
+                        }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("方块样式"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    CountDown {
+                        attr {
+                            totalSeconds(86400L)
+                            format(CountDownFormat.HH_MM_SS)
+                            style(CountDownStyle.BLOCK)
+                            blockBg(Color(0xFF1677FFL))
+                            blockFontSize(20f)
+                        }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("带冒号的方块样式"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    CountDown {
+                        attr {
+                            totalSeconds(300L)
+                            format(CountDownFormat.MM_SS)
+                            style(CountDownStyle.COLON)
+                            blockBg(Color(0xFFFF4D4FL))
+                            separatorColor(Color(0xFFFF4D4FL))
+                            blockFontSize(18f)
+                        }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("毫秒级 + 循环"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    CountDown {
+                        attr {
+                            totalSeconds(10L)
+                            format(CountDownFormat.HH_MM_SS_MS)
+                            style(CountDownStyle.PLAIN)
+                            loop(true)
+                            textColor(Color(0xFF52C41AL))
+                            fontSize(16f)
+                        }
+                    }
+                }
+
+                // ── Rate ─────────────────────────────────────────────────────
+                View {
+                    attr { height(1f); backgroundColor(Color(0xFFE8E8E8L)); marginVertical(16f) }
+                }
+                Text {
+                    attr {
+                        text("评分 Rate")
+                        fontSize(16f)
+                        fontWeightBold()
+                        color(Color(0xFF333333L))
+                        marginBottom(16f)
+                        marginLeft(16f)
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("基础星级"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Rate {
+                        attr { value(ctx.rateValue1); showScore(true) }
+                        event { onChange { v -> ctx.rateValue1 = v } }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("半星 + 心形"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Rate {
+                        attr {
+                            value(ctx.rateValue2)
+                            allowHalf(true)
+                            shape(RateShape.HEART)
+                            filledColor(Color(0xFFFF4D4FL))
+                            size(28f)
+                            showScore(true)
+                        }
+                        event { onChange { v -> ctx.rateValue2 = v } }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("只读 + 大尺寸"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Rate {
+                        attr {
+                            value(ctx.rateValue3)
+                            readonly(true)
+                            size(36f)
+                            filledColor(Color(0xFFFAAD14L))
+                            count(10)
+                            shape(RateShape.CIRCLE)
+                        }
+                    }
+                }
+
+                View {
+                    attr { flexDirectionColumn(); marginHorizontal(16f); marginBottom(12f) }
+                    Text { attr { text("自定义字符"); fontSize(12f); color(Color(0xFF999999L)); marginBottom(8f) } }
+                    Rate {
+                        attr {
+                            value(3f)
+                            filledChar("🔥")
+                            emptyChar("⬜")
+                            size(24f)
+                            readonly(true)
+                        }
                     }
                 }
 
