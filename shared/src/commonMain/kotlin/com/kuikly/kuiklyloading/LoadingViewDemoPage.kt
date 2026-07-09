@@ -114,6 +114,10 @@ internal class LoadingViewDemoPage : BasePager() {
     private var rateValue2 by observable(2.5f)
     private var rateValue3 by observable(4f)
 
+    // --- RatingView state ---
+    private var ratingVal by observable(3f)
+    private var cdRunning by observable(false)
+
     // --- Spin state ---
     private var spinVisible by observable(false)
 
