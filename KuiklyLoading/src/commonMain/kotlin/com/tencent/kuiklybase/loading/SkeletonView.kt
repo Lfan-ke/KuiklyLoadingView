@@ -232,7 +232,7 @@ class SkeletonView : ComposeView<SkeletonAttr, ComposeEvent>() {
     private var animHandle = ""
     private var throttleHandle = ""
 
-    override fun createAttr() = SkeletonAttr()
+    override fun createAttr(): SkeletonAttr = SkeletonAttr()
 
     override fun didInit() {
         super.didInit()
