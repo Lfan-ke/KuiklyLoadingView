@@ -81,6 +81,7 @@ import com.tencent.kuiklybase.loading.FloatButtonColor
 import com.tencent.kuiklybase.loading.Collapse
 import com.tencent.kuiklybase.loading.CollapsePanel
 import com.tencent.kuiklybase.loading.CollapseTheme
+import com.tencent.kuiklybase.loading.Watermark
 
 @Page("LoadingViewDemoPage")
 internal class LoadingViewDemoPage : BasePager() {
@@ -1604,6 +1605,64 @@ internal class LoadingViewDemoPage : BasePager() {
                                 content {
                                     Text {
                                         attr { fontSize(13f); color(Color(0xFF666666L)); text("支持自定义展开箭头颜色：绿色。") }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ── Watermark 水印 ───────────────────────────────────────────
+                sectionHeader("Watermark 水印")
+                View {
+                    attr {
+                        marginLeft(16f)
+                        marginRight(16f)
+                        marginTop(8f)
+                        marginBottom(16f)
+                        borderRadius(8f)
+                        overflow(false)
+                    }
+                    Watermark {
+                        attr {
+                            text("机密文件")
+                            color(Color(red255 = 0, green255 = 0, blue255 = 0, alpha01 = 0.1f))
+                            fontSize(13f)
+                            rotate(-25f)
+                            tileSize(100f, 56f)
+                            gap(40f, 40f)
+                            grid(5, 6)
+                            content {
+                                View {
+                                    attr {
+                                        height(240f)
+                                        backgroundColor(Color(0xFFFAFCFFL))
+                                        flexDirectionColumn()
+                                        allCenter()
+                                    }
+                                    Text {
+                                        attr {
+                                            fontSize(16f)
+                                            fontWeightBold()
+                                            color(Color(0xFF1A1A1AL))
+                                            text("2026 Q2 财务报告")
+                                            marginBottom(8f)
+                                        }
+                                    }
+                                    Text {
+                                        attr {
+                                            fontSize(13f)
+                                            color(Color(0xFF666666L))
+                                            text("净利润同比增长 23.5%")
+                                            marginBottom(4f)
+                                        }
+                                    }
+                                    Text {
+                                        attr {
+                                            fontSize(13f)
+                                            color(Color(0xFF666666L))
+                                            text("总营收 ¥12,450,000")
+                                        }
                                     }
                                 }
                             }
