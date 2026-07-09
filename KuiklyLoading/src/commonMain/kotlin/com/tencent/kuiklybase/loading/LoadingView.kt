@@ -29,6 +29,8 @@ import com.tencent.kuikly.core.timer.setTimeout
 import com.tencent.kuikly.core.views.ActivityIndicator
 import com.tencent.kuikly.core.views.Modal
 import com.tencent.kuikly.core.views.Text
+import com.tencent.kuikly.core.views.TransitionType
+import com.tencent.kuikly.core.views.TransitionView
 import com.tencent.kuikly.core.views.View
 
 fun ViewContainer<*, *>.Loading(init: LoadingView.() -> Unit) {
@@ -38,6 +40,7 @@ fun ViewContainer<*, *>.Loading(init: LoadingView.() -> Unit) {
 class LoadingView : ComposeView<LoadingAttr, LoadingEvent>() {
 
     private var timeoutHandle: String = ""
+    private var delayHandle: String = ""
 
     override fun createAttr(): LoadingAttr = LoadingAttr()
 
@@ -46,7 +49,8 @@ class LoadingView : ComposeView<LoadingAttr, LoadingEvent>() {
     override fun body(): ViewBuilder {
         val ctx = this
         return {
-            vif({ ctx.attr.visible }) {
+            // actuallyVisible respects the optional delayMs before showing the card
+            vif({ ctx.attr.actuallyVisible }) {
                 if (ctx.attr.fullScreen) {
                     Modal {
                         attr {
@@ -58,11 +62,17 @@ class LoadingView : ComposeView<LoadingAttr, LoadingEvent>() {
                                 absolutePositionAllZero()
                                 backgroundColor(ctx.attr.maskColor)
                             }
+                            // Intercept touches on the mask so they don't fall through
+                            event { click { } }
                         }
-                        ctx.loadingCard(this)
+                        TransitionView(type = TransitionType.FADE_IN_OUT) {
+                            ctx.loadingCard(this)
+                        }
                     }
                 } else {
-                    ctx.loadingCard(this)
+                    TransitionView(type = TransitionType.FADE_IN_OUT) {
+                        ctx.loadingCard(this)
+                    }
                 }
             }
         }
@@ -78,19 +88,27 @@ class LoadingView : ComposeView<LoadingAttr, LoadingEvent>() {
                 borderRadius(8f)
                 backgroundColor(Color(red255 = 0, green255 = 0, blue255 = 0, alpha01 = 0.7f))
             }
-            ActivityIndicator {
-                attr {
-                    isGrayStyle(false)
-                    transform(scale = Scale(2f, 2f))
-                }
-            }
-            vif({ ctx.attr.loadingText.isNotEmpty() }) {
-                Text {
+            // Intercept touches on the card so they don't pass through in non-fullscreen mode
+            event { click { } }
+            val customContent = ctx.attr.customContentBuilder
+            if (customContent != null) {
+                customContent(this)
+            } else {
+                ActivityIndicator {
+                    val size = ctx.attr.indicatorSize
                     attr {
-                        marginTop(12f)
-                        fontSize(13f)
-                        color(Color.WHITE)
-                        text(ctx.attr.loadingText)
+                        isGrayStyle(false)
+                        transform(scale = Scale(size, size))
+                    }
+                }
+                vif({ ctx.attr.loadingText.isNotEmpty() }) {
+                    Text {
+                        attr {
+                            marginTop(12f)
+                            fontSize(13f)
+                            color(Color.WHITE)
+                            text(ctx.attr.loadingText)
+                        }
                     }
                 }
             }
@@ -100,17 +118,31 @@ class LoadingView : ComposeView<LoadingAttr, LoadingEvent>() {
     override fun viewWillUnload() {
         super.viewWillUnload()
         cancelTimeout()
+        cancelDelay()
     }
 
     override fun attr(init: LoadingAttr.() -> Unit) {
         val wasVisible = attr.visible
         val prevTimeoutMs = attr.timeoutMs
         super.attr(init)
-        if (attr.visible && !wasVisible) {
-            scheduleTimeout()
-        } else if (!attr.visible && wasVisible) {
+        val nowVisible = attr.visible
+        if (nowVisible && !wasVisible) {
+            val delayMs = attr.delayMs
+            cancelDelay()
+            if (delayMs > 0) {
+                delayHandle = setTimeout(pagerId, delayMs) {
+                    attr.actuallyVisible = true
+                    scheduleTimeout()
+                }
+            } else {
+                attr.actuallyVisible = true
+                scheduleTimeout()
+            }
+        } else if (!nowVisible && wasVisible) {
             cancelTimeout()
-        } else if (attr.visible && attr.timeoutMs != prevTimeoutMs) {
+            cancelDelay()
+            attr.actuallyVisible = false
+        } else if (nowVisible && attr.timeoutMs != prevTimeoutMs) {
             scheduleTimeout()
         }
     }
@@ -121,6 +153,7 @@ class LoadingView : ComposeView<LoadingAttr, LoadingEvent>() {
         cancelTimeout()
         timeoutHandle = setTimeout(pagerId, ms) {
             attr.visible = false
+            attr.actuallyVisible = false
             event.onFireEvent("timeout", null)
         }
     }
@@ -131,15 +164,26 @@ class LoadingView : ComposeView<LoadingAttr, LoadingEvent>() {
             timeoutHandle = ""
         }
     }
+
+    private fun cancelDelay() {
+        if (delayHandle.isNotEmpty()) {
+            clearTimeout(delayHandle)
+            delayHandle = ""
+        }
+    }
 }
 
 class LoadingAttr : ComposeAttr() {
 
     internal var visible by observable(false)
+    internal var actuallyVisible by observable(false)
     internal var fullScreen by observable(true)
     internal var loadingText by observable("")
     internal var maskColor by observable(Color(red255 = 0, green255 = 0, blue255 = 0, alpha01 = 0.4f))
     internal var timeoutMs: Int = 0
+    internal var indicatorSize: Float = 2f
+    internal var delayMs: Int = 0
+    internal var customContentBuilder: (ViewContainer<*, *>.() -> Unit)? = null
 
     fun visible(show: Boolean) {
         visible = show
@@ -159,6 +203,31 @@ class LoadingAttr : ComposeAttr() {
 
     fun timeoutMs(ms: Int) {
         timeoutMs = ms
+    }
+
+    /**
+     * Scale factor for the default [ActivityIndicator]. Ignored when [customContent] is set.
+     * Default: 2.0
+     */
+    fun indicatorSize(size: Float) {
+        indicatorSize = size.coerceAtLeast(0.5f)
+    }
+
+    /**
+     * Delays showing the card by [ms] milliseconds after [visible] is set to true.
+     * If the loading completes before the delay elapses, no card is shown at all —
+     * preventing a flash of the indicator for fast operations.
+     */
+    fun delayMs(ms: Int) {
+        delayMs = ms.coerceAtLeast(0)
+    }
+
+    /**
+     * Replaces the default spinner + text layout with a custom view.
+     * The builder receives the card [ViewContainer] as receiver.
+     */
+    fun customContent(builder: ViewContainer<*, *>.() -> Unit) {
+        customContentBuilder = builder
     }
 }
 
